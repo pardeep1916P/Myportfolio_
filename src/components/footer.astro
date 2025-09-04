@@ -48,7 +48,7 @@ import LikeButton from "../React/LikeButton.tsx";
               {
                 desc: "Built with",
                 name: "Cursor AI",
-                icon: "/svg/cursor.svg",
+                icon: "/svg/cursor.png",
                 alt: "Cursor AI Logo",
               },
               {
@@ -71,7 +71,9 @@ import LikeButton from "../React/LikeButton.tsx";
                 <img
                   src={tech.icon}
                   alt={tech.alt}
-                  class="h-5 w-5 object-contain filter brightness-0 invert opacity-50"
+                  class={`h-5 w-5 object-contain ${
+                    tech.name === 'Cursor AI' ? '' : 'filter brightness-0 invert opacity-50'
+                  }`}
                   loading="lazy"
                 />
                 <span class="text-[var(--white-icon)] text-sm">

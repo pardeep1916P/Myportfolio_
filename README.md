@@ -1,7 +1,7 @@
 # Charan Chaitanya Devanaboyina - Portfolio
 
 <div align="center">
-  <img src="https://cursor.sh/logo.png" alt="Cursor AI" width="24" height="24" style="vertical-align: middle; margin-right: 8px;">
+  <img src="svg/cursor.png" alt="Cursor AI" width="24" height="24" style="vertical-align: middle; margin-right: 8px;">
   <em>Built with ❤️ using Cursor AI</em>
 </div>
 
@@ -98,7 +98,7 @@ The portfolio will be available at `http://localhost:4321`
 ## 🤖 Development
 
 <div align="center">
-  <img src="https://cursor.sh/logo.png" alt="Cursor AI" width="20" height="20" style="vertical-align: middle; margin-right: 6px;">
+  <img src="svg/cursor.png" alt="Cursor AI" width="20" height="20" style="vertical-align: middle; margin-right: 6px;">
   <strong>This portfolio was built using Cursor AI</strong>
 </div>
 

@@ -1,65 +1,119 @@
-# Portfolio
-![OscarHernandez-portfolio](https://github.com/user-attachments/assets/e284a42b-15c5-495c-99c7-ad5c1eb3bbe7)
-![Deploy Status](https://img.shields.io/badge/Deploy-Vercel-black?style=flat&logo=vercel)
+# Charan Chaitanya Devanaboyina - Portfolio
+
+<div align="center">
+  <img src="https://cursor.sh/logo.png" alt="Cursor AI" width="24" height="24" style="vertical-align: middle; margin-right: 8px;">
+  <em>Built with ❤️ using Cursor AI</em>
+</div>
+
+<br>
+
+## 👋 About Me
+
+Hi, I'm **Charan Chaitanya Devanaboyina**, an aspiring Cloud Engineer and Computer Science student at Gudlavalleru Engineering College (4th Year). I'm passionate about cloud computing and currently learning Java, Python, DSA, exploring serverless architecture, and **Docker**. My next learning goals include **Terraform** and **Kubernetes** to further enhance my cloud infrastructure and DevOps skills.
+
+## 🎯 Objective
+
+Aspiring Cloud Engineer with strong expertise in AWS cloud services, serverless architecture, Docker, Kubernetes, and modern web technologies. Seeking opportunities to leverage my cloud computing and containerization skills to contribute to innovative projects while growing in cloud infrastructure, DevOps, and backend development.
+
+## 🛠️ Tech Stack
+
+- **Programming:** Python, Java, SQL
+- **Web Technologies:** HTML5, CSS3, JavaScript, Node.js, Express.js
+- **Cloud:** AWS (IAM, EC2, Lambda, DynamoDB, S3, API Gateway, SES, Cognito, Rekognition)
+- **Databases:** MongoDB
+- **Tools:** Git, GitHub, Vercel, Render, IntelliJ, PyCharm, VS Code, Docker Desktop
+- **Currently Learning:** Docker (containerization and orchestration)
+- **Next Goals:** Terraform (Infrastructure as Code), Kubernetes (container orchestration)
+- **Soft Skills:** Problem-solving, Communication, Teamwork, Quick Learner
+
+## 🚀 Projects
+
+### 1. StoreIt - Cloud File Storage Platform
+Cloud-based file storage system with secure upload/download, file sharing, access management, and user authentication features. Built with AWS S3, Lambda, DynamoDB, and API Gateway.
+
+### 2. Serverless Chat Application
+Real-time chat application using AWS serverless architecture. Features WebSocket connections for instant messaging and real-time notifications. Built with AWS Lambda, API Gateway, and deployed on Vercel.
+
+### 3. AI-Powered Image Recognition Web App
+Intelligent image analysis system using AWS Rekognition API. Users upload images for AI-generated labels and descriptions. Integrated AWS S3, Lambda, and Express.js backend.
+
+## 🏆 Certifications
+
+- **AWS Certified Cloud Practitioner** — Amazon Web Services (December 2024)
+- **AWS Cloud Practitioner Essentials** — AWS Skill Builder (November 2024)
+- **Python Programming Fundamentals** — Coursera (October 2024)
+- **Docker & Kubernetes Basics** — Docker Inc. (September 2024)
+- **Currently Pursuing:** Advanced Docker certification and Terraform fundamentals
+
+## 📚 Education
+
+- **B.Tech (CSE),** Gudlavalleru Engineering College — CGPA: 7.8 (2026)
+- **Intermediate (MPC),** Sri Chaitanya Junior College, Machilipatnam — 77% (2022)
+- **SSC,** Sree Balajee Vidyalayam, Machilipatnam — GPA: 10.0 (2020)
+
+## 🌐 Social Links
+
+- **GitHub:** [@pardeep1916P](https://github.com/pardeep1916P)
+- **LinkedIn:** [Charan Chaitanya](https://linkedin.com/in/chinnu-4a7174306)
+- **Email:** charanchaitanya07@gmail.com
+
+## 🎵 Portfolio Features
+
+This portfolio showcases:
+- **Modern, responsive design** with personal branding
+- **Cloud-focused content** highlighting AWS expertise
+- **Interactive projects section** with live demos
+- **Professional certifications showcase** with verification links
+- **Contact form** for easy communication
+- **Social media integration** and professional links
+
+## 🚀 Getting Started
+
+```bash
+# Clone the repository
+git clone <your-repo-url>
+cd Portfolio
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+The portfolio will be available at `http://localhost:4321`
+
+## 🎨 Built With
+
+- **Astro** - Modern static site generator
+- **TailwindCSS** - Utility-first CSS framework
+- **React** - Interactive components
+- **TypeScript** - Type-safe development
+- **Firebase** - Real-time database for like counter
+- **Formspree** - Contact form handling
+
+## 🤖 Development
+
+<div align="center">
+  <img src="https://cursor.sh/logo.png" alt="Cursor AI" width="20" height="20" style="vertical-align: middle; margin-right: 6px;">
+  <strong>This portfolio was built using Cursor AI</strong>
+</div>
+
+This project was developed with the assistance of Cursor AI, showcasing the power of AI-assisted development in creating modern, responsive web applications. The development process leveraged Cursor's intelligent code completion, refactoring capabilities, and contextual suggestions to build a professional portfolio efficiently.
+
+### Key Features Developed with Cursor AI:
+- ✨ Interactive contact form with real-time validation
+- 🎨 Responsive design with TailwindCSS
+- 🔥 Firebase integration for real-time features
+- 📱 Mobile-first responsive layout
+- 🎯 SEO optimization and meta tags
+- 🚀 Performance optimization
 
 ---
 
-[Demo](https://oscarhernandez.vercel.app/)
-
-[Astro Themes](https://astro.build/themes/details/dark-minimal/)
-
-[ReactBits Showcase](https://www.reactbits.dev/showcase) 
-
-The component `<LetterGlitch \>` was taken from [ReactBits.dev](https://www.reactbits.dev/)
-
-## **Stack**  
-### **Frontend**  
-![Astro](https://img.shields.io/badge/Astro-FF5D01?logo=astro&logoColor=white)
-![Tailwind](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
-
-### **Tools**  
-![Figma](https://img.shields.io/badge/Figma-F24E1E?logo=figma&logoColor=white)
-![Prettier](https://img.shields.io/badge/Prettier-F7B93E?logo=prettier&logoColor=black)
-![Canva](https://img.shields.io/badge/Canva-c900c3?logo=canva&logoColor=white)
-
-### **Show your favorite Spotify album (or your own)** ![Spotify](https://img.shields.io/badge/Spotify-06cc1a?logo=spotify&logoColor=white)
-1. Choose your Spotify album
-2. Access the share options
-3. Select 'copy embed code'
-```
-<iframe src="https://open.spotify.com/embed/album/ALBUM_ID" style="border-radius:12px border:0;" class="w-full h-40" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-```
-4. Insert the embed code on footer.astro
-
-That's it!
-
-## **Project structure**
-```
-public/
-└── svg/
-src/
-├── Components/
-├── layouts/
-├── React/
-└── pages/
-```
-
-## **Local configuration** 
-1. Clone the repo:  
-```
-git clone https://github.com/gothsec/portfolio
-```
-2. Install dependencies:
-```  
-npm install
-```
-3. Start the develpoment server:
-```  
-npm run dev
-```
-
-> **Important Notice:**  
-> This project is licensed under the [MIT License](https://opensource.org/licenses/mit).  
-> According to the license terms, any redistribution (including compiled or modified versions), you **must** retain the original copyright 
-> notice and the full license text. Copyright © 2025 Oscar Hernandez. All rights reserved.
+<div align="center">
+  <em>Built with ❤️ using modern web technologies and Cursor AI</em>
+</div>

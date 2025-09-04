@@ -11,14 +11,14 @@
         </p>
         <div class="flex items-center gap-2">
           <span>Location:</span>
-          <span class="text-[var(--white)]">Colombia, Valle del cauca</span>
+          <span class="text-[var(--white)]">Machilipatnam, Andhra Pradesh, India</span>
         </div>
       </div>
 
       <div>
         <form
           id="contact-form"
-          action="https://formspree.io/f/mnnjznkj"
+          action={import.meta.env.PUBLIC_FORMSPREE_FORM}
           method="POST"
           class="flex flex-col gap-4"
         >
@@ -31,11 +31,12 @@
           />
           <input
             type="email"
-            name="reply_to"
+            name="email"
             placeholder="Email"
             required
             class="px-4 py-2 bg-[#1414149c] text-[var(--white)] border border-[var(--white-icon-tr)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--sec)]"
           />
+          <input type="hidden" name="_subject" value="New message from portfolio" />
           <textarea
             name="message"
             placeholder="Message"
@@ -45,7 +46,8 @@
           ></textarea>
           <button
             type="submit"
-            class="px-4 py-2 bg-[var(--white-icon-tr)] text-[var(--white)] rounded-lg opacity-60 transition-opacity border border-[var(--white-icon-tr)] hover:opacity-100 hover:bg-[var(--white-icon-tr)]"
+            id="submit-btn"
+            class="px-4 py-2 bg-[var(--white-icon-tr)] text-[var(--white)] rounded-lg opacity-60 transition-all duration-300 border border-[var(--white-icon-tr)] hover:opacity-100 hover:bg-[var(--white-icon-tr)]"
           >
             Submit
           </button>
@@ -64,11 +66,37 @@
 <script type="module" is:inline>
   const form = document.getElementById("contact-form");
   const formMessage = document.getElementById("form-message");
+  const submitBtn = document.getElementById("submit-btn");
+  const inputs = form.querySelectorAll("input, textarea");
+
+  // Function to check if all required fields are filled
+  function checkFormValidity() {
+    const nameInput = form.querySelector('input[name="from_name"]');
+    const emailInput = form.querySelector('input[name="email"]');
+    const messageInput = form.querySelector('textarea[name="message"]');
+    
+    const isFormValid = nameInput.value.trim() !== "" && 
+                       emailInput.value.trim() !== "" && 
+                       messageInput.value.trim() !== "";
+    
+    if (isFormValid) {
+      submitBtn.classList.remove("opacity-60", "bg-[var(--white-icon-tr)]");
+      submitBtn.classList.add("opacity-100", "bg-[var(--sec)]", "hover:bg-[var(--sec)]", "hover:opacity-90");
+    } else {
+      submitBtn.classList.remove("opacity-100", "bg-[var(--sec)]", "hover:bg-[var(--sec)]", "hover:opacity-90");
+      submitBtn.classList.add("opacity-60", "bg-[var(--white-icon-tr)]");
+    }
+  }
+
+  // Add event listeners to all form inputs
+  inputs.forEach(input => {
+    input.addEventListener("input", checkFormValidity);
+    input.addEventListener("blur", checkFormValidity);
+  });
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(form);
-
     try {
       const response = await fetch(form.action, {
         method: "POST",
@@ -78,15 +106,18 @@
       if (response.ok) {
         form.reset();
         form.style.display = "none";
+        formMessage.textContent = "✅ Thank you! Your message has been sent.";
         formMessage.classList.remove("hidden");
+        // Reset button color after form submission
+        submitBtn.classList.remove("opacity-100", "bg-[var(--sec)]", "hover:bg-[var(--sec)]", "hover:opacity-90");
+        submitBtn.classList.add("opacity-60", "bg-[var(--white-icon-tr)]");
       } else {
-        const data = await response.json();
-        console.error("Error response:", data);
-        alert("There was a problem sending your message.");
+        formMessage.textContent = "⚠️ There was a problem sending your message. Please try again later.";
+        formMessage.classList.remove("hidden");
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("There was a problem sending your message.");
+      formMessage.textContent = "⚠️ Network error. Please try again later.";
+      formMessage.classList.remove("hidden");
     }
   });
 </script>

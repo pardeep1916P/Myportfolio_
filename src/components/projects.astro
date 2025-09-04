@@ -1,8 +1,8 @@
 ---
 import { Image } from "astro:assets";
-import svgl from "../../public/svgl.png";
-import stockin from "../../public/stockin.png";
-import moviesfordevs from "../../public/moviesfordevs.png";
+import labeler from "../../public/labeler.png";
+import storeIt from "../../public/svg/storeIt.png";
+import chatapp from "../../public/chatapp.png";
 
 interface Project {
   title: string;
@@ -14,25 +14,25 @@ interface Project {
 
 const projects: Project[] = [
   {
-    title: "MoviesForDevs",
-    image: moviesfordevs as ImageMetadata,
-    link: "https://github.com/gothsec/MoviesForDevs",
-    preview: "https://movies-for-devs.vercel.app",
-    status: "On Development",
+    title: "StoreIt - Cloud File Storage",
+    image: storeIt as ImageMetadata,
+    link: "https://github.com/pardeep1916P/StoreIt-2",
+    preview: "https://storeit-v2.vercel.app",
+    status: "Cloud Storage Platform",
   },
   {
-    title: "StockIn",
-    image: stockin as ImageMetadata,
-    link: "https://github.com/gothsec/stockin-demo",
-    preview: "https://stockin-demo.vercel.app",
-    status: "On Development",
+    title: "Serverless Chat App v2",
+    image: chatapp as ImageMetadata,
+    link: "https://github.com/pardeep1916P/serverless-Chat-app-v2",
+    preview: "https://serverless-chat-app-v2.vercel.app",
+    status: "Serverless Real-time Chat",
   },
   {
-    title: "Svgl.app",
-    image: svgl as ImageMetadata,
-    link: "https://github.com/pheralb/svgl",
-    preview: "https://svgl.app",
-    status: "Contributor",
+    title: "Image Labeler (AWS Rekognition)",
+    image: labeler as ImageMetadata,
+    link: "https://github.com/pardeep1916P/image-recognition",
+    preview: "https://image-recognition-using-aws-rekognition.vercel.app",
+    status: "Image Recognition with AWS Rekognition",
   },
 ];
 ---
@@ -62,14 +62,14 @@ const projects: Project[] = [
                   class="w-full h-48 md:h-72 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
-              <div class="flex items-center px-3">
-                <div class="flex-grow">
-                  <h4 class="text-2xl font-semibold">{project.title}</h4>
+              <div class="flex px-3 gap-3 md:flex-row flex-col items-start">
+                <div class="flex-grow text-left w-full min-w-0">
+                  <h4 class="text-2xl font-semibold leading-snug">{project.title}</h4>
                   <span class="py-1 text-sm text-[var(--white-icon)]">
                     {project.status}
                   </span>
                 </div>
-                <div class="flex gap-2 ml-auto">
+                <div class="flex gap-2 md:ml-auto mt-2 md:mt-0 flex-shrink-0 self-start">
                   <a
                     target="_blank"
                     href={project.link}
@@ -109,7 +109,7 @@ const projects: Project[] = [
     </div>
     <a
       target="_blank"
-      href="https://github.com/Gothsec?tab=repositories"
+      href="https://github.com/pardeep1916P?tab=repositories"
       aria-label="GitHub"
       class="w-full flex items-center justify-center gap-2 mt-9 text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-[var(--white-icon-tr)] p-3 rounded-full bg-[#1414149c] hover:bg-[var(--white-icon-tr)]"
     >

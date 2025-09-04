@@ -1,0 +1,131 @@
+---
+// Demo certificate images - you can replace these with actual certificate screenshots
+const certifications = [
+  {
+    name: "AWS Cloud Practitioner Essentials",
+    issuer: "AWS Skill Builder",
+    date: "November 2024",
+    image: "/aws-skill-builder.svg",
+    credentialId: "AWS-SB-2024-002",
+    description: "Comprehensive understanding of AWS Cloud fundamentals, security, and best practices.",
+    url: "#",
+  },
+  {
+    name: "Python Essentials 1",
+    issuer: "Cisco Networking Academy",
+    date: "August 2025",
+    image: "/python-cert.svg",
+    credentialId: "",
+    description: "Fundamentals of Python programming including data types, control flow, and functions.",
+    url: "https://www.credly.com/badges/cefd2bbd-8282-49d1-bbc6-af49ff5a08e7",
+  },
+  {
+    name: "Python Essentials 2",
+    issuer: "Cisco Networking Academy",
+    date: "August 2025",
+    image: "/python-cert.svg",
+    credentialId: "",
+    description: "Intermediate Python: modules, OOP basics, exceptions, and problem‑solving patterns.",
+    url: "https://www.credly.com/badges/962ce149-d29d-41e8-bdd6-098f2e7db84d",
+  },
+];
+---
+
+<section id="certifications" class="py-8 md:py-12 border-t border-[#ffffff10] text-[var(--white)]">
+  <div class="max-w-5xl mx-auto px-4 md:px-0">
+    <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec">Achievements</h2>
+    <h3 class="text-3xl md:text-4xl lg:text-5xl font-medium mb-6 md:mb-8">Certifications</h3>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
+      {
+        certifications.map((cert) => (
+          <div class="group bg-[#1414149c] border border-[var(--white-icon-tr)] rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-[var(--sec)] transition-all duration-300">
+            <div class="flex flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-4">
+              <div class="flex-shrink-0 mx-auto sm:mx-0">
+                <img src={cert.image} alt={cert.name} class="w-16 h-16 md:w-16 md:h-16 rounded-xl" />
+              </div>
+              
+              <div class="flex-1 min-w-0 text-center sm:text-left">
+                <h4 class="text-lg md:text-xl font-semibold text-[var(--white)] mb-2 group-hover:text-[var(--sec)] transition-colors duration-300">
+                  {cert.name}
+                </h4>
+                <p class="text-[var(--white-icon)] text-xs md:text-sm mb-1">
+                  Issued by <span class="text-[var(--white)]">{cert.issuer}</span>
+                </p>
+                <p class="text-[var(--white-icon)] text-xs md:text-sm mb-2">
+                  {cert.date} • ID: <span class="text-[var(--white)]">{cert.credentialId}</span>
+                </p>
+                <p class="text-[var(--white-icon)] text-xs md:text-sm leading-relaxed mb-4">
+                  {cert.description}
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                  <a
+                    href={cert.url ?? "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center justify-center px-3 py-2 text-xs md:text-sm font-medium text-[var(--white)] rounded-lg border border-[var(--white-icon-tr)] bg-[#1414149c] hover:bg-[var(--white-icon-tr)] transition-colors duration-300"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 md:w-5 md:h-5 mr-2 opacity-90">
+                      <path d="M14 3h7v7h-2V6.414l-9.293 9.293-1.414-1.414L17.586 5H14V3z"/>
+                      <path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7z"/>
+                    </svg>
+                    View Certificate
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+    
+    <div class="mt-8 md:mt-12 text-center">
+      <p class="text-[var(--white-icon)] text-base md:text-lg mb-4 px-4">
+        Continuously learning and expanding my cloud expertise
+      </p>
+      <a
+        href="https://www.credly.com/users/devanaboyina-charan-chaitanya"
+        target="_blank"
+        class="inline-flex items-center px-4 md:px-6 py-3 text-base md:text-lg font-medium text-[var(--white)] bg-gradient-to-r from-[var(--sec)] to-purple-600 rounded-xl hover:from-purple-600 hover:to-[var(--sec)] transition-all duration-300 transform hover:scale-105"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 md:w-5 md:h-5 mr-2">
+          <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z"/>
+        </svg>
+        View All Certifications on Credly
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .shiny-sec {
+    background: linear-gradient(135deg, #a476ff 25%, #eee5ff 50%, #a476ff 75%);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shine 3s linear infinite;
+  }
+
+  @keyframes shine {
+    0% {
+      background-position: 100% 50%;
+    }
+    30%,
+    70% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Mobile-specific optimizations */
+  @media (max-width: 640px) {
+    .certifications-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .cert-card {
+      margin: 0 0.5rem;
+    }
+  }
+</style>

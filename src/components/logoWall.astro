@@ -1,19 +1,38 @@
 ---
 const technologies = [
-  "astro",
-  "vue",
-  "react",
-  "typeScript",
-  "tailwindcss",
-  "next",
+  "aws",
+  "lambda",
+  "apiGateway", 
+  "s3 bucket",
+  "dynamoDB",
+  "cognito",
+  "cloudWatch",
+  "docker",
+  "kubernetes",
+  "terraform",
+  "githubActions",
   "nodejs",
-  "HTML5",
-  "CSS3",
-  "javaScript",
-  "git",
-  "supabase",
-  "mysql",
-  "bash",
+  "typeScript",
+  "vercel",
+];
+
+const pngLogos = [
+  "aws",
+  "lambda", 
+  "apiGateway",
+  "s3 bucket",
+  "dynamoDB",
+  "cognito",
+  "cloudWatch"
+];
+
+const awsServices = [
+  "lambda",
+  "apiGateway",
+  "s3 bucket", 
+  "dynamoDB",
+  "cognito",
+  "cloudWatch"
 ];
 ---
 
@@ -27,19 +46,23 @@ const technologies = [
   >
   </div>
 
-  <div class="flex animate-scroll hover:animate-paused gap-12 md:gap-20 w-max">
+  <div class="flex scroll-container gap-12 md:gap-20 w-max" id="scroll-container">
     {
       [...technologies, ...technologies, ...technologies].map((tech) => (
         <div class="flex items-center gap-2 group transition-all duration-300">
           <img
-            src={`/svg/${tech}.svg`}
+            src={pngLogos.includes(tech) ? `/svg/${tech}.png` : `/svg/${tech}.svg`}
             alt={tech}
-            class="h-7 w-auto object-contain transition-transform group-hover:scale-110 opacity-60"
+            class="h-7 w-auto object-contain transition-transform group-hover:scale-110"
             width="30"
             height="30"
             loading="lazy"
+            style="filter: none;"
           />
-          <span class="text-lg font-medium text-[var(--white-icon)]">
+          <span class={`text-lg font-medium ${
+            tech === 'aws' ? 'text-[#00D4FF] shiny-aws' : 
+            'text-[var(--white-icon)]'
+          }`}>
             {tech.charAt(0).toUpperCase() + tech.slice(1)}
           </span>
         </div>
@@ -57,13 +80,66 @@ const technologies = [
       transform: translateX(-50%);
     }
   }
-  .animate-scroll {
-    animation: scroll 60s linear infinite;
+  .scroll-container {
+    /* Animation handled by JavaScript */
   }
 
-  @media (min-width: 768px) {
-    .animate-scroll {
-      animation-duration: 50s;
+  .shiny-aws {
+    background: linear-gradient(135deg, #00D4FF 25%, #FFFFFF 50%, #00D4FF 75%);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shine-aws 3s linear infinite;
+  }
+
+  @keyframes shine-aws {
+    0% {
+      background-position: 100% 50%;
+    }
+    30%,
+    70% {
+      background-position: 0% 50%;
     }
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('scroll-container');
+    let startTime = Date.now();
+    let isHovered = false;
+    let currentPosition = 0;
+    let animationId;
+    
+    function animate() {
+      const now = Date.now();
+      const elapsed = (now - startTime) / 1000;
+      const duration = isHovered ? 120 : 60; // 120s when hovered, 60s normal
+      const progress = (elapsed % duration) / duration;
+      currentPosition = -progress * 50; // -50% is the full scroll distance
+      
+      container.style.transform = `translateX(${currentPosition}%)`;
+      animationId = requestAnimationFrame(animate);
+    }
+    
+    container.addEventListener('mouseenter', function() {
+      if (!isHovered) {
+        isHovered = true;
+        startTime = Date.now() - (currentPosition / -50) * 120 * 1000; // Adjust start time for smooth transition
+      }
+    });
+    
+    container.addEventListener('mouseleave', function() {
+      if (isHovered) {
+        isHovered = false;
+        startTime = Date.now() - (currentPosition / -50) * 60 * 1000; // Adjust start time for smooth transition
+      }
+    });
+    
+    // Start animation
+    animate();
+  });
+</script>
+
+

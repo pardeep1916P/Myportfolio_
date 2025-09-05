@@ -1,14 +1,32 @@
-// Simple in-memory storage with fallback to local storage
-let likesCount = 0;
+import { readFile, writeFile } from 'fs/promises';
+import { join } from 'path';
 
-// Try to get initial count from environment variable or default to 0
-if (process.env.INITIAL_LIKES) {
-  likesCount = parseInt(process.env.INITIAL_LIKES) || 0;
+// File path for storing likes count
+const LIKES_FILE = join(process.cwd(), 'public', 'likes.json');
+
+async function getLikesCount() {
+  try {
+    const data = await readFile(LIKES_FILE, 'utf-8');
+    const parsed = JSON.parse(data);
+    return parsed.likes || 0;
+  } catch (error) {
+    // If file doesn't exist, return 0
+    return 0;
+  }
+}
+
+async function setLikesCount(count) {
+  try {
+    await writeFile(LIKES_FILE, JSON.stringify({ likes: count }), 'utf-8');
+  } catch (error) {
+    console.error('Error writing likes file:', error);
+  }
 }
 
 export async function GET() {
   try {
-    return new Response(JSON.stringify({ likes: likesCount }), {
+    const likes = await getLikesCount();
+    return new Response(JSON.stringify({ likes }), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
@@ -33,11 +51,15 @@ export async function GET() {
 
 export async function POST() {
   try {
-    // Increment likes count
-    likesCount += 1;
+    // Get current count and increment
+    const currentLikes = await getLikesCount();
+    const newLikes = currentLikes + 1;
+    
+    // Save new count
+    await setLikesCount(newLikes);
     
     return new Response(JSON.stringify({ 
-      likes: likesCount,
+      likes: newLikes,
       message: 'Like added successfully!' 
     }), {
       status: 200,
@@ -51,10 +73,10 @@ export async function POST() {
   } catch (error) {
     console.error('Error incrementing likes:', error);
     return new Response(JSON.stringify({ 
-      likes: likesCount,
-      message: 'Like added successfully!' 
+      likes: 0,
+      message: 'Error updating likes' 
     }), {
-      status: 200,
+      status: 500,
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',

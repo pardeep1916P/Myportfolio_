@@ -19,32 +19,22 @@ const LikeButton = () => {
     // Load current likes count from Vercel API
     const loadLikes = async () => {
       try {
-        console.log("Loading likes from API...");
         const response = await fetch('/api/likes');
-        console.log("API response:", response.status, response.ok);
-        
         if (response.ok) {
           const data = await response.json();
-          console.log("API data:", data);
           setLikes(data.likes);
           setAnimateLikes(true);
           setTimeout(() => setAnimateLikes(false), 300);
           return;
-        } else {
-          console.log("API response not ok:", response.status);
         }
       } catch (error) {
-        console.log("Vercel API error:", error);
+        console.log("Vercel API not available, using local storage");
       }
       
       // Fallback to local storage
       const storedLikes = localStorage.getItem("websiteLikes");
       if (storedLikes) {
-        console.log("Using local storage:", storedLikes);
         setLikes(parseInt(storedLikes) || 0);
-      } else {
-        console.log("No local storage, using 0");
-        setLikes(0);
       }
     };
 
@@ -70,7 +60,6 @@ const LikeButton = () => {
       setIsProcessing(true);
       
       // Use Vercel API
-      console.log("Sending like to API...");
       const response = await fetch('/api/likes', {
         method: 'POST',
         headers: {
@@ -78,18 +67,13 @@ const LikeButton = () => {
         },
       });
       
-      console.log("Like API response:", response.status, response.ok);
-      
       if (response.ok) {
         const data = await response.json();
-        console.log("Like API data:", data);
         setLikes(data.likes);
         setIsLiked(true);
         localStorage.setItem("websiteIsLiked", "true");
         triggerLikeAnimation();
         return;
-      } else {
-        console.log("Like API failed:", response.status);
       }
       
       // Fallback to local storage

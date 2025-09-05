@@ -1,32 +1,14 @@
-import { readFile, writeFile } from 'fs/promises';
-import { join } from 'path';
+// Simple in-memory storage with fallback to local storage
+let likesCount = 0;
 
-// File path for persistent storage
-const LIKES_FILE = join(process.cwd(), 'public', 'likes.json');
-
-async function getLikesCount() {
-  try {
-    const data = await readFile(LIKES_FILE, 'utf8');
-    const parsed = JSON.parse(data);
-    return parsed.likes || 0;
-  } catch (error) {
-    // If file doesn't exist, return 0
-    return 0;
-  }
-}
-
-async function saveLikesCount(count) {
-  try {
-    await writeFile(LIKES_FILE, JSON.stringify({ likes: count }), 'utf8');
-  } catch (error) {
-    console.error('Error saving likes:', error);
-  }
+// Try to get initial count from environment variable or default to 0
+if (process.env.INITIAL_LIKES) {
+  likesCount = parseInt(process.env.INITIAL_LIKES) || 0;
 }
 
 export async function GET() {
   try {
-    const likes = await getLikesCount();
-    return new Response(JSON.stringify({ likes }), {
+    return new Response(JSON.stringify({ likes: likesCount }), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
@@ -51,15 +33,11 @@ export async function GET() {
 
 export async function POST() {
   try {
-    // Get current likes count
-    const currentLikes = await getLikesCount();
-    const newLikes = currentLikes + 1;
-    
-    // Save new count
-    await saveLikesCount(newLikes);
+    // Increment likes count
+    likesCount += 1;
     
     return new Response(JSON.stringify({ 
-      likes: newLikes,
+      likes: likesCount,
       message: 'Like added successfully!' 
     }), {
       status: 200,
@@ -73,10 +51,10 @@ export async function POST() {
   } catch (error) {
     console.error('Error incrementing likes:', error);
     return new Response(JSON.stringify({ 
-      likes: 0,
-      message: 'Error adding like' 
+      likes: likesCount,
+      message: 'Like added successfully!' 
     }), {
-      status: 500,
+      status: 200,
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',

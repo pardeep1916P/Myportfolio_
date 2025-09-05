@@ -17,6 +17,7 @@ async function setLikesCount(count) {
 export async function GET() {
   try {
     const likes = await getLikesCount();
+    console.log('GET /api/likes - returning likes:', likes);
     return new Response(JSON.stringify({ likes }), {
       status: 200,
       headers: {

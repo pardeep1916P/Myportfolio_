@@ -1,26 +1,17 @@
-import { readFile, writeFile } from 'fs/promises';
-import { join } from 'path';
+// Simple in-memory storage with fallback
+let likesCount = 0;
 
-// File path for storing likes count
-const LIKES_FILE = join(process.cwd(), 'public', 'likes.json');
+// Try to get initial count from environment variable
+if (process.env.INITIAL_LIKES) {
+  likesCount = parseInt(process.env.INITIAL_LIKES) || 0;
+}
 
 async function getLikesCount() {
-  try {
-    const data = await readFile(LIKES_FILE, 'utf-8');
-    const parsed = JSON.parse(data);
-    return parsed.likes || 0;
-  } catch (error) {
-    // If file doesn't exist, return 0
-    return 0;
-  }
+  return likesCount;
 }
 
 async function setLikesCount(count) {
-  try {
-    await writeFile(LIKES_FILE, JSON.stringify({ likes: count }), 'utf-8');
-  } catch (error) {
-    console.error('Error writing likes file:', error);
-  }
+  likesCount = count;
 }
 
 export async function GET() {

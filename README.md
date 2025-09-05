@@ -36,13 +36,6 @@ Real-time chat application using AWS serverless architecture. Features WebSocket
 ### 3. AI-Powered Image Recognition Web App
 Intelligent image analysis system using AWS Rekognition API. Users upload images for AI-generated labels and descriptions. Integrated AWS S3, Lambda, and Express.js backend.
 
-## 🏆 Certifications
-
-- **AWS Certified Cloud Practitioner** — Amazon Web Services (December 2024)
-- **AWS Cloud Practitioner Essentials** — AWS Skill Builder (November 2024)
-- **Python Programming Fundamentals** — Coursera (October 2024)
-- **Docker & Kubernetes Basics** — Docker Inc. (September 2024)
-- **Currently Pursuing:** Advanced Docker certification and Terraform fundamentals
 
 ## 📚 Education
 

@@ -71,8 +71,8 @@ import LikeButton from "../React/LikeButton.tsx";
                 <img
                   src={tech.icon}
                   alt={tech.alt}
-                  class={`h-5 w-5 object-contain ${
-                    tech.name === 'Cursor AI' ? '' : 'filter brightness-0 invert opacity-50'
+                  class={`object-contain ${
+                    tech.name === 'Cursor AI' ? 'h-7 w-7 opacity-80' : 'h-5 w-5 filter brightness-0 invert opacity-50'
                   }`}
                   loading="lazy"
                 />
@@ -90,7 +90,7 @@ import LikeButton from "../React/LikeButton.tsx";
           <iframe
             title="Spotify"
             style="border-radius:12px; border:0;"
-            src="https://open.spotify.com/embed/playlist/1AHht24vN47Fo7dDur9xoY?utm_source=generator&theme=0&locale=en_US&view=coverart"
+            src="https://open.spotify.com/embed/playlist/1AHht24vN47Fo7dDur9xoY?utm_source=generator&theme=0&locale=en_US&view=list&t=0"
             class="w-full h-40"
             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
             loading="lazy"></iframe>

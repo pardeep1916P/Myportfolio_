@@ -1,7 +1,6 @@
 # Charan Chaitanya Devanaboyina - Portfolio
 
 <div align="center">
-  <img src="svg/cursor.png" alt="Cursor AI" width="24" height="24" style="vertical-align: middle; margin-right: 8px;">
   <em>Built with ❤️ using Cursor AI</em>
 </div>
 
@@ -92,13 +91,12 @@ The portfolio will be available at `http://localhost:4321`
 - **TailwindCSS** - Utility-first CSS framework
 - **React** - Interactive components
 - **TypeScript** - Type-safe development
-- **Firebase** - Real-time database for like counter
+- **Vercel KV** - Real-time database for like counter
 - **Formspree** - Contact form handling
 
 ## 🤖 Development
 
 <div align="center">
-  <img src="svg/cursor.png" alt="Cursor AI" width="20" height="20" style="vertical-align: middle; margin-right: 6px;">
   <strong>This portfolio was built using Cursor AI</strong>
 </div>
 
@@ -107,7 +105,7 @@ This project was developed with the assistance of Cursor AI, showcasing the powe
 ### Key Features Developed with Cursor AI:
 - ✨ Interactive contact form with real-time validation
 - 🎨 Responsive design with TailwindCSS
-- 🔥 Firebase integration for real-time features
+- 🔥 Vercel KV integration for real-time features
 - 📱 Mobile-first responsive layout
 - 🎯 SEO optimization and meta tags
 - 🚀 Performance optimization

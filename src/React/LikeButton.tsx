@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const LikeButton = () => {
   const [likes, setLikes] = useState(0);
@@ -7,6 +7,18 @@ const LikeButton = () => {
   const [triggerAnimation, setTriggerAnimation] = useState(false);
   const [animateLikes, setAnimateLikes] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [wsConnected, setWsConnected] = useState(false);
+  const wsRef = useRef<WebSocket | null>(null);
+
+  // Get WebSocket URL from environment variable
+  const getWebSocketUrl = () => {
+    // Check if we're in browser and have the environment variable
+    if (typeof window !== 'undefined' && import.meta.env.PUBLIC_WEBSOCKET_URL) {
+      return import.meta.env.PUBLIC_WEBSOCKET_URL;
+    }
+    // Fallback to local development or default
+    return 'wss://6wlyb2jxxi.execute-api.ap-south-2.amazonaws.com/production';
+  };
 
   useEffect(() => {
     setIsClient(true);
@@ -16,29 +28,94 @@ const LikeButton = () => {
       setIsLiked(storedIsLiked === "true");
     }
 
-    // Load current likes count from Vercel API
-    const loadLikes = async () => {
+    // Initialize WebSocket connection
+    const initWebSocket = () => {
       try {
-        const response = await fetch('/api/likes');
-        if (response.ok) {
-          const data = await response.json();
-          setLikes(data.likes);
-          setAnimateLikes(true);
-          setTimeout(() => setAnimateLikes(false), 300);
-          return;
-        }
+        const wsUrl = getWebSocketUrl();
+        console.log('Connecting to WebSocket:', wsUrl);
+        
+        wsRef.current = new WebSocket(wsUrl);
+        
+        wsRef.current.onopen = () => {
+          console.log('WebSocket connected');
+          setWsConnected(true);
+          // Request current likes count
+          wsRef.current?.send(JSON.stringify({ action: 'getLikes' }));
+        };
+        
+        wsRef.current.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            console.log('WebSocket message received:', data);
+            
+            if (data.action === 'getLikesResponse') {
+              setLikes(data.likes || 0);
+              setAnimateLikes(true);
+              setTimeout(() => setAnimateLikes(false), 300);
+            } else if (data.action === 'incrementLikesResponse') {
+              if (data.success) {
+                setLikes(data.likes || 0);
+                setIsLiked(true);
+                localStorage.setItem("websiteIsLiked", "true");
+                triggerLikeAnimation();
+              } else {
+                console.error('Failed to increment likes:', data.error);
+                // Fallback to local storage
+                fallbackToLocalStorage();
+              }
+            }
+          } catch (error) {
+            console.error('Error parsing WebSocket message:', error);
+          }
+        };
+        
+        wsRef.current.onclose = () => {
+          console.log('WebSocket disconnected');
+          setWsConnected(false);
+          // Try to reconnect after 3 seconds
+          setTimeout(initWebSocket, 3000);
+        };
+        
+        wsRef.current.onerror = (error) => {
+          console.error('WebSocket error:', error);
+          setWsConnected(false);
+        };
+        
       } catch (error) {
-        console.log("Vercel API not available, using local storage");
+        console.error('Error initializing WebSocket:', error);
+        // Fallback to local storage
+        loadLikesFromLocalStorage();
       }
-      
-      // Fallback to local storage
+    };
+
+    // Fallback function for local storage
+    const loadLikesFromLocalStorage = () => {
       const storedLikes = localStorage.getItem("websiteLikes");
       if (storedLikes) {
         setLikes(parseInt(storedLikes) || 0);
       }
     };
 
-    loadLikes();
+    // Fallback function for incrementing likes
+    const fallbackToLocalStorage = () => {
+      const currentLikes = parseInt(localStorage.getItem("websiteLikes") || "0");
+      const newLikes = currentLikes + 1;
+      localStorage.setItem("websiteLikes", newLikes.toString());
+      setLikes(newLikes);
+      setIsLiked(true);
+      localStorage.setItem("websiteIsLiked", "true");
+      triggerLikeAnimation();
+    };
+
+    // Initialize WebSocket
+    initWebSocket();
+
+    // Cleanup on unmount
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+    };
   }, []);
 
   const triggerLikeAnimation = () => {
@@ -49,9 +126,7 @@ const LikeButton = () => {
   };
 
   const handleLike = async () => {
-    if (isProcessing) return;
-
-    if (isLiked) {
+    if (isProcessing || isLiked) {
       triggerLikeAnimation();
       return;
     }
@@ -59,24 +134,15 @@ const LikeButton = () => {
     try {
       setIsProcessing(true);
       
-      // Use Vercel API
-      const response = await fetch('/api/likes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setLikes(data.likes);
-        setIsLiked(true);
-        localStorage.setItem("websiteIsLiked", "true");
-        triggerLikeAnimation();
+      // Use WebSocket if connected
+      if (wsRef.current && wsConnected) {
+        console.log('Sending incrementLikes via WebSocket');
+        wsRef.current.send(JSON.stringify({ action: 'incrementLikes' }));
         return;
       }
       
-      // Fallback to local storage
+      // Fallback to local storage if WebSocket not available
+      console.log('WebSocket not available, using local storage fallback');
       const currentLikes = parseInt(localStorage.getItem("websiteLikes") || "0");
       const newLikes = currentLikes + 1;
       localStorage.setItem("websiteLikes", newLikes.toString());
@@ -138,10 +204,15 @@ const LikeButton = () => {
         <span
           className={`
           text-sm pl-3 transition-all duration-300 ease-in-out ${animateLikes ? "animate-scale" : ""}
-          text-[var(--white)]
+          text-[var(--white)] flex items-center gap-2
         `}
         >
           {likes} Likes
+          {/* Connection status indicator */}
+          <div className={`w-2 h-2 rounded-full ${
+            wsConnected ? 'bg-green-500' : 'bg-red-500'
+          } ${wsConnected ? 'animate-pulse' : ''}`} 
+          title={wsConnected ? 'Connected to server' : 'Using local storage'} />
         </span>
       </button>
     </div>

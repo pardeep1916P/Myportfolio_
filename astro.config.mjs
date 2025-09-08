@@ -6,7 +6,7 @@ export default defineConfig({
   integrations: [tailwind(), react()],
   vite: {
     optimizeDeps: {
-      include: ["zwitch", "firebase/app", "firebase/firestore"],
+      include: ["zwitch"],
     },
     resolve: {
       alias: {
@@ -21,7 +21,6 @@ export default defineConfig({
       rollupOptions: {
         output: {
           manualChunks: {
-            'firebase': ['firebase/app', 'firebase/firestore'],
             'react': ['react', 'react-dom'],
           },
         },

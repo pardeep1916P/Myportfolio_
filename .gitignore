@@ -21,3 +21,10 @@ dist
 public/*.map
 public/*.tmp
 public/*.bak
+.vscode/
+.idea/
+Thumbs.db
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+.eslintcache

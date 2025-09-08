@@ -1,0 +1,199 @@
+---
+// Test page for likes functionality
+---
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Likes Test Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #1a1a1a;
+      color: white;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 20px;
+      border: 1px solid #333;
+      border-radius: 8px;
+    }
+    .status {
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    .success { background: #4CAF50; }
+    .error { background: #f44336; }
+    .info { background: #2196F3; }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover { background: #0056b3; }
+    #logs {
+      background: #000;
+      color: #0f0;
+      padding: 10px;
+      border-radius: 4px;
+      font-family: monospace;
+      height: 200px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 Likes System Test Page</h1>
+  
+  <div class="test-section">
+    <h2>Environment Variables</h2>
+    <div id="env-status" class="status info">Checking environment variables...</div>
+  </div>
+
+  <div class="test-section">
+    <h2>WebSocket Connection</h2>
+    <div id="ws-status" class="status info">Not connected</div>
+    <button onclick="connectWebSocket()">Connect WebSocket</button>
+    <button onclick="disconnectWebSocket()">Disconnect</button>
+  </div>
+
+  <div class="test-section">
+    <h2>Likes Actions</h2>
+    <button onclick="getLikes()">Get Likes</button>
+    <button onclick="incrementLikes()">Increment Likes</button>
+    <div id="likes-count">Likes: 0</div>
+  </div>
+
+  <div class="test-section">
+    <h2>Debug Logs</h2>
+    <button onclick="clearLogs()">Clear Logs</button>
+    <div id="logs"></div>
+  </div>
+
+  <script>
+    let ws = null;
+    let likesCount = 0;
+
+    function log(message) {
+      const logs = document.getElementById('logs');
+      const timestamp = new Date().toLocaleTimeString();
+      logs.textContent += `[${timestamp}] ${message}\n`;
+      logs.scrollTop = logs.scrollHeight;
+      console.log(message);
+    }
+
+    function clearLogs() {
+      document.getElementById('logs').textContent = '';
+    }
+
+    function updateEnvStatus() {
+      const envStatus = document.getElementById('env-status');
+      const wsUrl = import.meta.env.PUBLIC_WEBSOCKET_URL;
+      
+      if (wsUrl) {
+        envStatus.textContent = `✅ WebSocket URL: ${wsUrl}`;
+        envStatus.className = 'status success';
+      } else {
+        envStatus.textContent = '❌ PUBLIC_WEBSOCKET_URL not found in environment variables';
+        envStatus.className = 'status error';
+      }
+    }
+
+    function connectWebSocket() {
+      const wsUrl = import.meta.env.PUBLIC_WEBSOCKET_URL || 'wss://6wlyb2jxxi.execute-api.ap-south-2.amazonaws.com/production';
+      
+      log(`Connecting to WebSocket: ${wsUrl}`);
+      
+      try {
+        ws = new WebSocket(wsUrl);
+        
+        ws.onopen = () => {
+          log('✅ WebSocket connected successfully');
+          document.getElementById('ws-status').textContent = '✅ Connected';
+          document.getElementById('ws-status').className = 'status success';
+        };
+        
+        ws.onmessage = (event) => {
+          log(`📨 Received: ${event.data}`);
+          try {
+            const data = JSON.parse(event.data);
+            if (data.action === 'getLikesResponse') {
+              likesCount = data.likes || 0;
+              updateLikesDisplay();
+            } else if (data.action === 'incrementLikesResponse') {
+              if (data.success) {
+                likesCount = data.likes || 0;
+                updateLikesDisplay();
+                log('✅ Likes incremented successfully');
+              } else {
+                log(`❌ Failed to increment likes: ${data.error}`);
+              }
+            }
+          } catch (error) {
+            log(`❌ Error parsing message: ${error.message}`);
+          }
+        };
+        
+        ws.onclose = () => {
+          log('❌ WebSocket disconnected');
+          document.getElementById('ws-status').textContent = '❌ Disconnected';
+          document.getElementById('ws-status').className = 'status error';
+        };
+        
+        ws.onerror = (error) => {
+          log(`❌ WebSocket error: ${error}`);
+          document.getElementById('ws-status').textContent = '❌ Error';
+          document.getElementById('ws-status').className = 'status error';
+        };
+        
+      } catch (error) {
+        log(`❌ Failed to create WebSocket: ${error.message}`);
+      }
+    }
+
+    function disconnectWebSocket() {
+      if (ws) {
+        ws.close();
+        ws = null;
+        log('🔌 WebSocket disconnected manually');
+      }
+    }
+
+    function getLikes() {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        log('📤 Sending getLikes request');
+        ws.send(JSON.stringify({ action: 'getLikes' }));
+      } else {
+        log('❌ WebSocket not connected');
+      }
+    }
+
+    function incrementLikes() {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        log('📤 Sending incrementLikes request');
+        ws.send(JSON.stringify({ action: 'incrementLikes' }));
+      } else {
+        log('❌ WebSocket not connected');
+      }
+    }
+
+    function updateLikesDisplay() {
+      document.getElementById('likes-count').textContent = `Likes: ${likesCount}`;
+    }
+
+    // Initialize
+    updateEnvStatus();
+    log('🚀 Test page loaded');
+  </script>
+</body>
+</html>

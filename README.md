@@ -63,7 +63,7 @@ This portfolio showcases:
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/pardeep1916P/Myportfolio_
 cd Portfolio
 
 # Install dependencies

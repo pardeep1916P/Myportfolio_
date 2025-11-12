@@ -2,31 +2,50 @@
 // Demo certificate images - you can replace these with actual certificate screenshots
 const certifications = [
   {
+    name: "AWS Certified Solutions Architect Associate",
+    issuer: "Amazon Web Services",
+    date: "2025",
+    image: "/certificates/aws-architect-cert.png",
+    credentialId: "411d3d1015704663a0dcbb2e424b3713",
+    description: "Expertise in designing distributed systems, implementing security best practices, and optimizing AWS architectures.",
+    certificateUrl: "https://cp.certmetrics.com/amazon/en/public/verify/credential/411d3d1015704663a0dcbb2e424b3713",
+    credlyUrl: "https://www.credly.com/badges/1305c231-9fd6-4a87-8582-a54d73eaca11/public_url",
+    showButtons: true,
+    verified: true,
+  },
+  {
+    name: "Oracle Cloud Infrastructure Foundations Associate",
+    issuer: "Oracle",
+    date: "2025",
+    image: "/certificates/oracle-cert.png",
+    credentialId: "6A47D044A74E446B13FF56F17BA37B4A",
+    description: "Comprehensive understanding of Oracle Cloud Infrastructure fundamentals, networking, compute, storage, and security.",
+    certificateUrl: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=6A47D044A74E446B13FF56F17BA37B4A0AE1CEB0BE4A31120E8860071969F7AC",
+    credlyUrl: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=6A47D044A74E446B13FF56F17BA37B4A0AE1CEB0BE4A31120E8860071969F7AC",
+    showButtons: true,
+    verified: true,
+  },
+  {
     name: "AWS Cloud Practitioner Essentials",
     issuer: "AWS Skill Builder",
-    date: "November 2024",
+    date: "August 2025",
     image: "/aws-skill-builder.svg",
     credentialId: "AWS-SB-2024-002",
     description: "Comprehensive understanding of AWS Cloud fundamentals, security, and best practices.",
-    url: "#",
+    certificateUrl: "#",
+    credlyUrl: "#",
+    showButtons: false,
   },
   {
-    name: "Python Essentials 1",
+    name: "Python Essentials 1 & 2",
     issuer: "Cisco Networking Academy",
     date: "August 2025",
     image: "/python-cert.svg",
-    credentialId: "",
-    description: "Fundamentals of Python programming including data types, control flow, and functions.",
-    url: "https://www.credly.com/badges/cefd2bbd-8282-49d1-bbc6-af49ff5a08e7",
-  },
-  {
-    name: "Python Essentials 2",
-    issuer: "Cisco Networking Academy",
-    date: "August 2025",
-    image: "/python-cert.svg",
-    credentialId: "",
-    description: "Intermediate Python: modules, OOP basics, exceptions, and problem‑solving patterns.",
-    url: "https://www.credly.com/badges/962ce149-d29d-41e8-bdd6-098f2e7db84d",
+    credentialId: "PCAP-2025",
+    description: "Complete Python programming from fundamentals to intermediate level, including OOP, modules, exceptions, and advanced problem-solving patterns.",
+    certificateUrl: "https://www.netacad.com/portal/learning",
+    credlyUrl: "https://www.credly.com/badges/cefd2bbd-8282-49d1-bbc6-af49ff5a08e7",
+    showButtons: false,
   },
 ];
 ---
@@ -42,37 +61,61 @@ const certifications = [
           <div class="group bg-[#1414149c] border border-[var(--white-icon-tr)] rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-[var(--sec)] transition-all duration-300">
             <div class="flex flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-4">
               <div class="flex-shrink-0 mx-auto sm:mx-0">
-                <img src={cert.image} alt={cert.name} class="w-16 h-16 md:w-16 md:h-16 rounded-xl" />
+                <img 
+                  src={cert.image} 
+                  alt={cert.name} 
+                  class="w-16 h-16 md:w-20 md:h-20 rounded-xl object-contain bg-white/5 p-2" 
+                  onerror="this.style.display='none'"
+                />
               </div>
               
               <div class="flex-1 min-w-0 text-center sm:text-left">
                 <h4 class="text-lg md:text-xl font-semibold text-[var(--white)] mb-2 group-hover:text-[var(--sec)] transition-colors duration-300">
                   {cert.name}
                 </h4>
-                <p class="text-[var(--white-icon)] text-xs md:text-sm mb-1">
-                  Issued by <span class="text-[var(--white)]">{cert.issuer}</span>
-                </p>
+                <div class="flex items-center justify-center sm:justify-start gap-2 mb-1">
+                  <p class="text-[var(--white-icon)] text-xs md:text-sm">
+                    Issued by <span class="text-[var(--white)]">{cert.issuer}</span>
+                  </p>
+                  {cert.verified && (
+                    <span class="verified-badge text-[10px] font-semibold px-1.5 py-0.5 rounded border border-[#ffd700]/20">
+                      Verified
+                    </span>
+                  )}
+                </div>
                 <p class="text-[var(--white-icon)] text-xs md:text-sm mb-2">
-                  {cert.date} • ID: <span class="text-[var(--white)]">{cert.credentialId}</span>
+                  {cert.date} {cert.credentialId && `• ID: ${cert.credentialId}`}
                 </p>
                 <p class="text-[var(--white-icon)] text-xs md:text-sm leading-relaxed mb-4">
                   {cert.description}
                 </p>
                 
-                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                  <a
-                    href={cert.url ?? "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center justify-center px-3 py-2 text-xs md:text-sm font-medium text-[var(--white)] rounded-lg border border-[var(--white-icon-tr)] bg-[#1414149c] hover:bg-[var(--white-icon-tr)] transition-colors duration-300"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 md:w-5 md:h-5 mr-2 opacity-90">
-                      <path d="M14 3h7v7h-2V6.414l-9.293 9.293-1.414-1.414L17.586 5H14V3z"/>
-                      <path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7z"/>
-                    </svg>
-                    View Certificate
-                  </a>
-                </div>
+                {cert.showButtons && (
+                  <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <a
+                      href={cert.certificateUrl ?? "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center justify-center px-3 py-2 text-xs md:text-sm font-medium text-[var(--white)] rounded-lg border border-[var(--white-icon-tr)] bg-[#1414149c] hover:bg-[var(--sec)] hover:border-[var(--sec)] transition-all duration-300"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 md:w-4 md:h-4 mr-2 opacity-90">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                      Verify Certificate
+                    </a>
+                    <a
+                      href={cert.credlyUrl ?? "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center justify-center px-3 py-2 text-xs md:text-sm font-medium text-[var(--white)] rounded-lg border border-[var(--white-icon-tr)] bg-[#1414149c] hover:bg-orange-500 hover:border-orange-500 transition-all duration-300"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 md:w-4 md:h-4 mr-2 opacity-90">
+                        <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z"/>
+                      </svg>
+                      Credly Badge
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -108,6 +151,16 @@ const certifications = [
     animation: shine 3s linear infinite;
   }
 
+  .verified-badge {
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 25%, #ffd700 50%, #ffed4e 75%, #ffd700 100%);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gold-shine 3s ease-in-out infinite;
+    display: inline-block;
+  }
+
   @keyframes shine {
     0% {
       background-position: 100% 50%;
@@ -115,6 +168,15 @@ const certifications = [
     30%,
     70% {
       background-position: 0% 50%;
+    }
+  }
+
+  @keyframes gold-shine {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
     }
   }
 

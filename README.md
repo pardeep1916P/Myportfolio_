@@ -78,6 +78,23 @@ npm run build
 
 The portfolio will be available at `http://localhost:4321`
 
+### GitHub Contributions Setup
+
+This site can render your GitHub contribution graph using the GitHub GraphQL API.
+
+- Create a `.env` file in the project root with:
+
+```bash
+# .env
+GITHUB_TOKEN=your_personal_access_token
+GITHUB_LOGIN=pardeep1916P # or your GitHub username
+```
+
+- Token options:
+  - Classic token: no scopes required for public data.
+  - Fine-grained token: grant minimal `read:user` permission.
+- For deployment (e.g., Vercel), add the same env vars in the dashboard.
+
 ## 🎨 Built With
 
 - **Astro** - Modern static site generator

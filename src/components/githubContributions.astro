@@ -1,0 +1,182 @@
+---
+const login = import.meta.env.GITHUB_LOGIN ?? "pardeep1916P";
+const token = import.meta.env.GITHUB_TOKEN;
+
+let calendar: {
+  totalContributions: number;
+  colors: string[];
+  weeks: Array<{
+    firstDay: string;
+    contributionDays: Array<{
+      date: string;
+      contributionCount: number;
+      color: string;
+    }>;
+  }>;
+} | null = null;
+let repos: Array<{
+  name: string;
+  url: string;
+  description: string | null;
+  stargazerCount: number;
+  forkCount: number;
+  isArchived: boolean;
+  // Add private visibility flag to indicate repos the token can access
+  isPrivate: boolean;
+}> = [];
+let error: string | null = null;
+
+if (!token) {
+  error = "Missing GITHUB_TOKEN environment variable.";
+} else {
+  try {
+    const res = await fetch("https://api.github.com/graphql", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        query: `
+          query($login: String!, $reposFirst: Int!) {
+            user(login: $login) {
+              contributionsCollection {
+                contributionCalendar {
+                  totalContributions
+                  colors
+                  weeks {
+                    firstDay
+                    contributionDays {
+                      date
+                      contributionCount
+                      color
+                    }
+                  }
+                }
+              }
+              repositories(first: $reposFirst, orderBy: {field: UPDATED_AT, direction: DESC}) {
+                nodes {
+                  name
+                  url
+                  description
+                  stargazerCount
+                  forkCount
+                  isArchived
+                  isPrivate
+                }
+              }
+            }
+          }`,
+        variables: { login, reposFirst: 8 },
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`GitHub API error: ${res.status}`);
+    }
+
+    const data = await res.json();
+    calendar = data?.data?.user?.contributionsCollection?.contributionCalendar ?? null;
+    repos = data?.data?.user?.repositories?.nodes ?? [];
+    if (!calendar) {
+      throw new Error("Could not load contribution calendar.");
+    }
+  } catch (e: any) {
+    error = e?.message ?? String(e);
+  }
+}
+
+// Custom palette matching portfolio theme (dark + purple accent)
+const portfolioPalette = [
+  "#1a1a1a", // 0 level
+  "#2a1f3f", // 1
+  "#4a3573", // 2
+  "#7b5bbf", // 3
+  "#a476ff", // 4 (var(--sec))
+];
+
+function colorForCount(count: number): string {
+  if (count <= 0) return portfolioPalette[0];
+  if (count <= 2) return portfolioPalette[1];
+  if (count <= 5) return portfolioPalette[2];
+  if (count <= 9) return portfolioPalette[3];
+  return portfolioPalette[4];
+}
+---
+
+<section id="contributions" class="py-12 border-t border-[#ffffff10] text-[var(--white)]">
+  <div class="max-w-5xl mx-auto">
+    <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec">My activity</h2>
+    <h3 class="text-4xl md:text-5xl font-medium mb-8">GitHub Contributions</h3>
+
+    {error ? (
+      <div class="text-[var(--white-icon)] bg-[#1414149c] border border-[var(--white-icon-tr)] rounded-xl p-4">
+        {error} Set `GITHUB_TOKEN` and optionally `GITHUB_LOGIN` in env.
+      </div>
+    ) : calendar ? (
+      <div class="space-y-6">
+        <div class="grid grid-flow-col grid-rows-7 gap-1">
+          {
+            calendar.weeks.map((week) =>
+              week.contributionDays.map((day) => (
+                <div
+                  class="w-3 h-3 md:w-3.5 md:h-3.5 rounded-sm"
+                  style={`background-color: ${colorForCount(day.contributionCount)};`}
+                  title={`${day.date} • ${day.contributionCount} contributions`}
+                ></div>
+              ))
+            )
+          }
+        </div>
+        <div class="flex items-center gap-3 text-sm text-[var(--white-icon)]">
+          <span>Total: {calendar.totalContributions}</span>
+          <div class="flex items-center gap-1">
+            <span>Less</span>
+            <div class="flex gap-1">
+              {portfolioPalette.map((c) => (
+                <span class="w-3 h-3 rounded-sm" style={`background-color: ${c};`}></span>
+              ))}
+            </div>
+            <span>More</span>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <h4 class="text-2xl font-semibold mb-3">Repositories</h4>
+          {repos.length === 0 ? (
+            <p class="text-[var(--white-icon)]">No accessible repositories available.</p>
+          ) : (
+            <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {repos.map((r) => (
+                <li class="rounded-xl border border-[var(--white-icon-tr)] bg-[#1414149c] p-4">
+                  <div class="flex justify-between items-start">
+                    <a href={r.url} target="_blank" rel="noopener noreferrer" class="text-xl font-medium hover:text-white">
+                      {r.name}
+                    </a>
+                    <div class="flex gap-3 text-sm text-[var(--white-icon)]">
+                      <span title="Stars">⭐ {r.stargazerCount}</span>
+                      <span title="Forks">🍴 {r.forkCount}</span>
+                    </div>
+                  </div>
+                  {r.description ? (
+                    <p class="mt-2 text-[var(--white-icon)]">{r.description}</p>
+                  ) : null}
+                  <div class="mt-2 flex gap-2">
+                    {r.isArchived ? (
+                      <span class="inline-block text-xs text-[var(--white-icon)]">Archived</span>
+                    ) : null}
+                    {r.isPrivate ? (
+                      <span class="inline-block text-xs text-[var(--white-icon)]">Private</span>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    ) : (
+      <div class="text-[var(--white-icon)]">Loading contributions...</div>
+    )}
+  </div>
+</section>

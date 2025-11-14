@@ -18,7 +18,6 @@ const certifications = [
     issuer: "Oracle",
     date: "2025",
     image: "/certificates/oracle-cert.png",
-    credentialId: "6A47D044A74E446B13FF56F17BA37B4A",
     description: "Comprehensive understanding of Oracle Cloud Infrastructure fundamentals, networking, compute, storage, and security.",
     certificateUrl: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=6A47D044A74E446B13FF56F17BA37B4A0AE1CEB0BE4A31120E8860071969F7AC",
     credlyUrl: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=6A47D044A74E446B13FF56F17BA37B4A0AE1CEB0BE4A31120E8860071969F7AC",
@@ -50,15 +49,15 @@ const certifications = [
 ];
 ---
 
-<section id="certifications" class="py-8 md:py-12 border-t border-[#ffffff10] text-[var(--white)]">
+<section id="certifications" class="py-8 md:py-12 pb-24 md:pb-12 border-t border-[#ffffff10] text-[var(--white)]">
   <div class="max-w-5xl mx-auto px-4 md:px-0">
     <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec">Achievements</h2>
     <h3 class="text-3xl md:text-4xl lg:text-5xl font-medium mb-6 md:mb-8">Certifications</h3>
     
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
       {
-        certifications.map((cert) => (
-          <div class="group bg-[#1414149c] border border-[var(--white-icon-tr)] rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-[var(--sec)] transition-all duration-300">
+        certifications.map((cert, index) => (
+          <div class={`group bg-[#1414149c] border border-[var(--white-icon-tr)] rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-[var(--sec)] transition-all duration-300 ${(cert.issuer === 'AWS Skill Builder' || cert.issuer === 'Cisco Networking Academy') ? 'hidden md:block' : ''}`}>
             <div class="flex flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-4">
               <div class="flex-shrink-0 mx-auto sm:mx-0">
                 <img 
@@ -69,50 +68,50 @@ const certifications = [
                 />
               </div>
               
-              <div class="flex-1 min-w-0 text-center sm:text-left">
-                <h4 class="text-lg md:text-xl font-semibold text-[var(--white)] mb-2 group-hover:text-[var(--sec)] transition-colors duration-300">
+              <div class="flex-1 min-w-0 text-center sm:text-left w-full">
+                <h4 class="text-lg md:text-xl font-semibold text-[var(--white)] mb-2 group-hover:text-[var(--sec)] transition-colors duration-300 break-words">
                   {cert.name}
                 </h4>
-                <div class="flex items-center justify-center sm:justify-start gap-2 mb-1">
-                  <p class="text-[var(--white-icon)] text-xs md:text-sm">
+                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
+                  <p class="text-[var(--white-icon)] text-xs md:text-sm whitespace-nowrap">
                     Issued by <span class="text-[var(--white)]">{cert.issuer}</span>
                   </p>
                   {cert.verified && (
-                    <span class="verified-badge text-[10px] font-semibold px-1.5 py-0.5 rounded border border-[#ffd700]/20">
+                    <span class="verified-badge text-[10px] font-semibold px-1.5 py-0.5 rounded border border-[#ffd700]/20 flex-shrink-0">
                       Verified
                     </span>
                   )}
                 </div>
-                <p class="text-[var(--white-icon)] text-xs md:text-sm mb-2">
-                  {cert.date} {cert.credentialId && `• ID: ${cert.credentialId}`}
+                <p class="text-[var(--white-icon)] text-xs md:text-sm mb-2 break-words">
+                  {cert.date} {cert.credentialId && cert.issuer === 'Oracle' && `• ID: ${cert.credentialId}`}
                 </p>
-                <p class="text-[var(--white-icon)] text-xs md:text-sm leading-relaxed mb-4">
+                <p class="text-[var(--white-icon)] text-xs md:text-sm leading-relaxed mb-4 break-words">
                   {cert.description}
                 </p>
                 
                 {cert.showButtons && (
-                  <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                  <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 flex-wrap">
                     <a
                       href={cert.certificateUrl ?? "#"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="inline-flex items-center justify-center px-3 py-2 text-xs md:text-sm font-medium text-[var(--white)] rounded-lg border border-[var(--white-icon-tr)] bg-[#1414149c] hover:bg-[var(--sec)] hover:border-[var(--sec)] transition-all duration-300"
+                      class="inline-flex items-center justify-center px-3 py-2 text-xs md:text-sm font-medium text-[var(--white)] rounded-lg border border-[var(--white-icon-tr)] bg-[#1414149c] hover:bg-[var(--sec)] hover:border-[var(--sec)] transition-all duration-300 whitespace-nowrap flex-shrink-0"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 md:w-4 md:h-4 mr-2 opacity-90">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 md:w-4 md:h-4 mr-2 opacity-90 flex-shrink-0">
                         <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                       </svg>
-                      Verify Certificate
+                      <span class="truncate">Verify</span>
                     </a>
                     <a
                       href={cert.credlyUrl ?? "#"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="inline-flex items-center justify-center px-3 py-2 text-xs md:text-sm font-medium text-[var(--white)] rounded-lg border border-[var(--white-icon-tr)] bg-[#1414149c] hover:bg-orange-500 hover:border-orange-500 transition-all duration-300"
+                      class="inline-flex items-center justify-center px-3 py-2 text-xs md:text-sm font-medium text-[var(--white)] rounded-lg border border-[var(--white-icon-tr)] bg-[#1414149c] hover:bg-orange-500 hover:border-orange-500 transition-all duration-300 whitespace-nowrap flex-shrink-0"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 md:w-4 md:h-4 mr-2 opacity-90">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 md:w-4 md:h-4 mr-2 opacity-90 flex-shrink-0">
                         <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z"/>
                       </svg>
-                      Credly Badge
+                      <span class="truncate">Credly</span>
                     </a>
                   </div>
                 )}
@@ -128,14 +127,13 @@ const certifications = [
         Continuously learning and expanding my cloud expertise
       </p>
       <a
-        href="https://www.credly.com/users/devanaboyina-charan-chaitanya"
-        target="_blank"
+        href="/all-certifications"
         class="inline-flex items-center px-4 md:px-6 py-3 text-base md:text-lg font-medium text-[var(--white)] bg-gradient-to-r from-[var(--sec)] to-purple-600 rounded-xl hover:from-purple-600 hover:to-[var(--sec)] transition-all duration-300 transform hover:scale-105"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 md:w-5 md:h-5 mr-2">
           <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z"/>
         </svg>
-        View All Certifications on Credly
+        View All Certifications
       </a>
     </div>
   </div>

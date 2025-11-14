@@ -37,15 +37,15 @@ const navItems: NavItem[] = [
 <div class="flex justify-center w-full">
   <nav
     id="main-nav"
-    class="fixed left-1/2 -translate-x-1/2 z-[100] bg-[var(--background)] border border-1 border-transparent backdrop-blur-xl transition-all duration-500 ease-in-out md:top-6 md:bottom-auto bottom-0 w-[80%]"
+    class="fixed left-1/2 -translate-x-1/2 z-[100] bg-[var(--background)] border border-1 border-transparent backdrop-blur-xl transition-all duration-500 ease-in-out top-4 md:top-4 bottom-0 md:bottom-auto w-[90%]"
   >
     <div class="container mx-auto flex justify-center items-center p-3">
       <ul
-        class="flex w-full justify-between md:space-x-6 md:justify-center md:gap-12 gap-6 relative"
+        class="flex w-full justify-between md:space-x-6 md:justify-center md:gap-12 gap-2 sm:gap-4 relative"
       >
         {
           navItems.map((item) => (
-            <li class="flex-1 md:flex-none relative">
+            <li class={`flex-1 md:flex-none relative ${item.label === 'Contributions' ? 'hidden md:block' : ''}`}>
               <a
                 href={item.href}
                 class="flex flex-col items-center gap-1 text-[var(--white-icon)] transition-colors text-xs md:text-base relative group"
@@ -55,7 +55,7 @@ const navItems: NavItem[] = [
                   <fragment set:html={item.icon} />
                 </span>
                 <span class="hidden md:inline-block">{item.label}</span>
-                <span class="md:hidden">{item.label}</span>
+                <span class="md:hidden text-[10px] leading-tight">{item.label}</span>
               </a>
             </li>
           ))
@@ -108,20 +108,24 @@ const navItems: NavItem[] = [
     nav {
       width: 100% !important;
       transform: translateX(-50%);
+      top: auto;
       bottom: 0;
       left: 50%;
       position: fixed;
-      border-radius: 1rem 1rem 0 0;
+      border-radius: 0;
+      border-top-left-radius: 1rem;
+      border-top-right-radius: 1rem;
+      border-bottom: none;
+      border-left: none;
+      border-right: none;
       border-color: #ffffff10;
     }
 
     nav.scrolling {
-      border-radius: 1rem 1rem 0 0;
+      border-radius: 0;
+      border-top-left-radius: 1rem;
+      border-top-right-radius: 1rem;
       background-color: var(--component-bg);
-    }
-
-    body {
-      padding-bottom: 70px;
     }
   }
 </style>
@@ -139,15 +143,27 @@ const navItems: NavItem[] = [
       const easeProgress = 1 - Math.pow(1 - scrollProgress, 4);
 
       const minWidth = 720;
-      const maxWidth = window.innerWidth * 0.8;
+      const maxWidth = window.innerWidth * 0.9;
       const currentWidth = maxWidth - (maxWidth - minWidth) * easeProgress;
 
       if (window.innerWidth >= 768) {
         nav?.style.setProperty("width", `${currentWidth}px`);
+      } else {
+        nav?.style.setProperty("width", `100%`);
+        nav?.style.setProperty("top", `auto`);
+        nav?.style.setProperty("bottom", `0`);
       }
     } else {
       nav?.classList.remove("scrolling");
-      nav?.style.setProperty("width", "80%");
+      if (window.innerWidth >= 768) {
+        nav?.style.setProperty("width", "80%");
+        nav?.style.setProperty("top", "1rem");
+        nav?.style.setProperty("bottom", "auto");
+      } else {
+        nav?.style.setProperty("width", "100%");
+        nav?.style.setProperty("top", "auto");
+        nav?.style.setProperty("bottom", "0");
+      }
     }
     rafId = null;
   }
@@ -203,12 +219,6 @@ const navItems: NavItem[] = [
 </script>
 
 <style>
-  @media (max-width: 767px) {
-    body {
-      padding-bottom: 70px;
-    }
-  }
-
   nav a.active {
     color: white !important;
   }

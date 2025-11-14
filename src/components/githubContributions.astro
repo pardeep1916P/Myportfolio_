@@ -2,18 +2,24 @@
 const login = import.meta.env.GITHUB_LOGIN ?? "pardeep1916P";
 const token = import.meta.env.GITHUB_TOKEN;
 
-let calendar: {
+// Types
+type CalendarWeek = {
+  firstDay: string;
+  contributionDays: Array<{
+    date: string;
+    contributionCount: number;
+    color: string;
+  }>;
+};
+
+type Calendar = {
   totalContributions: number;
   colors: string[];
-  weeks: Array<{
-    firstDay: string;
-    contributionDays: Array<{
-      date: string;
-      contributionCount: number;
-      color: string;
-    }>;
-  }>;
-} | null = null;
+  weeks: CalendarWeek[];
+};
+
+// Data containers
+let calendarsByYear: Record<number, Calendar | null> = {};
 let repos: Array<{
   name: string;
   url: string;
@@ -21,16 +27,60 @@ let repos: Array<{
   stargazerCount: number;
   forkCount: number;
   isArchived: boolean;
-  // Add private visibility flag to indicate repos the token can access
   isPrivate: boolean;
 }> = [];
 let error: string | null = null;
+
+const currentYear = new Date().getFullYear();
+// Limit to 2025 and 2024
+const years = [currentYear, currentYear - 1];
+
+function isoRangeForYear(y: number) {
+  const from = new Date(Date.UTC(y, 0, 1)).toISOString();
+  const to = new Date(Date.UTC(y, 11, 31, 23, 59, 59)).toISOString();
+  return { from, to };
+}
 
 if (!token) {
   error = "Missing GITHUB_TOKEN environment variable.";
 } else {
   try {
-    const res = await fetch("https://api.github.com/graphql", {
+    // Fetch calendars for each year in parallel
+    const calendarPromises = years.map(async (y) => {
+      const { from, to } = isoRangeForYear(y);
+      const res = await fetch("https://api.github.com/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          query: `
+            query($login: String!, $from: DateTime!, $to: DateTime!) {
+              user(login: $login) {
+                contributionsCollection(from: $from, to: $to) {
+                  contributionCalendar {
+                    totalContributions
+                    colors
+                    weeks {
+                      firstDay
+                      contributionDays { date contributionCount color }
+                    }
+                  }
+                }
+              }
+            }`,
+          variables: { login, from, to },
+        }),
+      });
+      if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
+      const data = await res.json();
+      const cal = data?.data?.user?.contributionsCollection?.contributionCalendar ?? null;
+      calendarsByYear[y] = cal;
+    });
+
+    // Fetch repositories with accessible visibility (public/private)
+    const reposRes = await fetch("https://api.github.com/graphql", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,46 +90,34 @@ if (!token) {
         query: `
           query($login: String!, $reposFirst: Int!) {
             user(login: $login) {
-              contributionsCollection {
-                contributionCalendar {
-                  totalContributions
-                  colors
-                  weeks {
-                    firstDay
-                    contributionDays {
-                      date
-                      contributionCount
-                      color
-                    }
-                  }
-                }
-              }
               repositories(first: $reposFirst, orderBy: {field: UPDATED_AT, direction: DESC}) {
-                nodes {
-                  name
-                  url
-                  description
-                  stargazerCount
-                  forkCount
-                  isArchived
-                  isPrivate
-                }
+                nodes { name url description stargazerCount forkCount isArchived isPrivate }
               }
             }
           }`,
-        variables: { login, reposFirst: 8 },
+        variables: { login, reposFirst: 50 },
       }),
     });
 
-    if (!res.ok) {
-      throw new Error(`GitHub API error: ${res.status}`);
-    }
+    if (!reposRes.ok) throw new Error(`GitHub API error: ${reposRes.status}`);
+    const reposData = await reposRes.json();
+    const allRepos = reposData?.data?.user?.repositories?.nodes ?? [];
 
-    const data = await res.json();
-    calendar = data?.data?.user?.contributionsCollection?.contributionCalendar ?? null;
-    repos = data?.data?.user?.repositories?.nodes ?? [];
-    if (!calendar) {
-      throw new Error("Could not load contribution calendar.");
+    // Filter to just the selected repos (case-insensitive matching)
+    const allowedRepos = ["Myportfolio_", "Terraform-Learnings-", "docker", "DSA_JAVA"];
+    repos = allRepos.filter((r) => {
+      const repoName = r.name || '';
+      return allowedRepos.some(allowed => 
+        repoName.toLowerCase() === allowed.toLowerCase() || 
+        repoName === allowed
+      );
+    });
+
+    await Promise.all(calendarPromises);
+
+    // Ensure at least the current year's calendar exists
+    if (!calendarsByYear[currentYear]) {
+      throw new Error("Could not load contribution calendars.");
     }
   } catch (e: any) {
     error = e?.message ?? String(e);
@@ -104,7 +142,7 @@ function colorForCount(count: number): string {
 }
 ---
 
-<section id="contributions" class="py-12 border-t border-[#ffffff10] text-[var(--white)]">
+<section id="contributions" class="py-12 pb-24 md:pb-12 border-t border-[#ffffff10] text-[var(--white)]">
   <div class="max-w-5xl mx-auto">
     <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec">My activity</h2>
     <h3 class="text-4xl md:text-5xl font-medium mb-8">GitHub Contributions</h3>
@@ -113,38 +151,71 @@ function colorForCount(count: number): string {
       <div class="text-[var(--white-icon)] bg-[#1414149c] border border-[var(--white-icon-tr)] rounded-xl p-4">
         {error} Set `GITHUB_TOKEN` and optionally `GITHUB_LOGIN` in env.
       </div>
-    ) : calendar ? (
+    ) : (
       <div class="space-y-6">
-        <div class="grid grid-flow-col grid-rows-7 gap-1">
-          {
-            calendar.weeks.map((week) =>
-              week.contributionDays.map((day) => (
-                <div
-                  class="w-3 h-3 md:w-3.5 md:h-3.5 rounded-sm"
-                  style={`background-color: ${colorForCount(day.contributionCount)};`}
-                  title={`${day.date} • ${day.contributionCount} contributions`}
-                ></div>
-              ))
-            )
-          }
-        </div>
-        <div class="flex items-center gap-3 text-sm text-[var(--white-icon)]">
-          <span>Total: {calendar.totalContributions}</span>
-          <div class="flex items-center gap-1">
-            <span>Less</span>
-            <div class="flex gap-1">
-              {portfolioPalette.map((c) => (
-                <span class="w-3 h-3 rounded-sm" style={`background-color: ${c};`}></span>
-              ))}
-            </div>
-            <span>More</span>
+        {/* Year-separated calendar */}
+        <div class="flex flex-col md:flex-row gap-4 items-start">
+          <div class="flex-1 w-full">
+            {years.map((y) => {
+              const cal = calendarsByYear[y];
+              return (
+                <div data-year-graph={y} class={y === currentYear ? "block" : "hidden"}>
+                  {cal ? (
+                    <div class="space-y-3">
+                      <div class="contributions-graph-container overflow-x-auto" data-graph-container>
+                        <div class="grid grid-flow-col grid-rows-7 gap-1 min-w-max md:min-w-0">
+                          {
+                            cal.weeks.map((week) =>
+                              week.contributionDays.map((day) => (
+                                <div
+                                  class="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 rounded-sm"
+                                  style={`background-color: ${colorForCount(day.contributionCount)};`}
+                                  title={`${day.date} • ${day.contributionCount} contributions`}
+                                ></div>
+                              ))
+                            )
+                          }
+                        </div>
+                      </div>
+                      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 text-xs sm:text-sm text-[var(--white-icon)]">
+                        <span>{cal.totalContributions} contributions in {y}</span>
+                        <div class="flex items-center gap-1">
+                          <span>Less</span>
+                          <div class="flex gap-0.5 sm:gap-1">
+                            {portfolioPalette.map((c) => (
+                              <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm" style={`background-color: ${c};`}></span>
+                            ))}
+                          </div>
+                          <span>More</span>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div class="text-[var(--white-icon)]">No data for {y}.</div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Year selector */}
+          <div class="flex flex-row md:flex-col gap-2 w-full md:w-auto">
+            {years.map((y) => (
+              <button
+                data-year-btn={y}
+                class={`px-3 py-2 rounded-md text-xs sm:text-sm border border-[var(--white-icon-tr)] whitespace-nowrap ${y === currentYear ? "bg-[var(--sec)] text-black font-semibold" : "bg-[#1414149c] text-[var(--white-icon)] hover:text-white"}`}
+              >
+                {y}
+              </button>
+            ))}
           </div>
         </div>
 
+        {/* Selected repositories */}
         <div class="mt-6">
           <h4 class="text-2xl font-semibold mb-3">Repositories</h4>
           {repos.length === 0 ? (
-            <p class="text-[var(--white-icon)]">No accessible repositories available.</p>
+            <p class="text-[var(--white-icon)]">No selected repositories available.</p>
           ) : (
             <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
               {repos.map((r) => (
@@ -175,8 +246,232 @@ function colorForCount(count: number): string {
           )}
         </div>
       </div>
-    ) : (
-      <div class="text-[var(--white-icon)]">Loading contributions...</div>
     )}
   </div>
 </section>
+
+<script>
+  // Year selector interactivity
+  const buttons = Array.from(document.querySelectorAll('[data-year-btn]')) as HTMLButtonElement[];
+  const graphs = Array.from(document.querySelectorAll('[data-year-graph]')) as HTMLElement[];
+
+  function activate(year: string) {
+    graphs.forEach((g) => {
+      g.classList.toggle('hidden', g.getAttribute('data-year-graph') !== year);
+      g.classList.toggle('block', g.getAttribute('data-year-graph') === year);
+    });
+    buttons.forEach((b) => {
+      const isActive = b.getAttribute('data-year-btn') === year;
+      b.classList.toggle('bg-[var(--sec)]', isActive);
+      b.classList.toggle('text-black', isActive);
+      b.classList.toggle('bg-[#1414149c]', !isActive);
+      b.classList.toggle('text-[var(--white-icon)]', !isActive);
+    });
+  }
+
+  buttons.forEach((b) => b.addEventListener('click', () => activate(b.getAttribute('data-year-btn')!)));
+
+  // Auto-scroll graph to show today's column on load
+  function scrollToToday() {
+    const graphContainers = document.querySelectorAll('[data-graph-container]');
+    graphContainers.forEach((container) => {
+      if (container instanceof HTMLElement && container.offsetParent !== null) {
+        const grid = container.querySelector('.grid');
+        if (!grid) return;
+        
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+        
+        // Find the day element that matches today by checking title attribute
+        const allDays = grid.querySelectorAll('div[title]');
+        let todayElement: HTMLElement | null = null;
+        
+        allDays.forEach((day) => {
+          const title = day.getAttribute('title') || '';
+          if (title.includes(todayStr)) {
+            todayElement = day as HTMLElement;
+          }
+        });
+        
+        if (todayElement) {
+          // Get positions
+          const containerWidth = container.clientWidth;
+          const todayOffsetLeft = todayElement.offsetLeft;
+          
+          // Calculate the width of a single day including gap
+          const todayRect = todayElement.getBoundingClientRect();
+          const dayWidth = todayRect.width + 4; // Day width + gap (gap-1 = 4px)
+          
+          // Find all days and check for future dates
+          const allDays = Array.from(grid.querySelectorAll('div[title]')) as HTMLElement[];
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          
+          // Find which column today is in
+          const todayIndex = allDays.indexOf(todayElement);
+          const todayColumn = Math.floor(todayIndex / 7);
+          
+          // Check if today's column contains any future dates
+          // If it does, we should only show up to today (not the whole column)
+          let lastValidColumn = todayColumn;
+          let hasFutureInTodayColumn = false;
+          
+          // Check all days in today's column for future dates
+          for (let row = 0; row < 7; row++) {
+            const dayIndex = todayColumn * 7 + row;
+            if (dayIndex < allDays.length) {
+              const day = allDays[dayIndex];
+              const title = day.getAttribute('title') || '';
+              const dateMatch = title.match(/(\d{4}-\d{2}-\d{2})/);
+              if (dateMatch) {
+                const dayDate = new Date(dateMatch[1]);
+                dayDate.setHours(0, 0, 0, 0);
+                if (dayDate > today) {
+                  hasFutureInTodayColumn = true;
+                  break;
+                }
+              }
+            }
+          }
+          
+          // If today's column has future dates, find the last column that doesn't
+          if (hasFutureInTodayColumn) {
+            // Go backwards from today's column to find the last column with no future dates
+            for (let col = todayColumn; col >= 0; col--) {
+              let columnHasFuture = false;
+              for (let row = 0; row < 7; row++) {
+                const dayIndex = col * 7 + row;
+                if (dayIndex < allDays.length) {
+                  const day = allDays[dayIndex];
+                  const title = day.getAttribute('title') || '';
+                  const dateMatch = title.match(/(\d{4}-\d{2}-\d{2})/);
+                  if (dateMatch) {
+                    const dayDate = new Date(dateMatch[1]);
+                    dayDate.setHours(0, 0, 0, 0);
+                    if (dayDate > today) {
+                      columnHasFuture = true;
+                      break;
+                    }
+                  }
+                }
+              }
+              if (!columnHasFuture) {
+                lastValidColumn = col;
+                break;
+              }
+            }
+          }
+          
+          // Find the last day in the last valid column
+          const lastDayInColumn = allDays[lastValidColumn * 7 + 6];
+          
+          if (lastDayInColumn) {
+            // Scroll so that the last valid column is the rightmost visible
+            // Position the right edge of the last valid column at the right edge of container
+            const columnRightEdge = lastDayInColumn.offsetLeft + dayWidth;
+            const scrollPosition = columnRightEdge - containerWidth;
+            
+            // Clamp to valid scroll range - never scroll past the last valid column
+            const minScroll = 0;
+            const maxScroll = Math.max(0, container.scrollWidth - containerWidth);
+            const finalScroll = Math.max(minScroll, Math.min(scrollPosition, maxScroll));
+            
+            container.scrollLeft = finalScroll;
+          } else {
+            // Fallback: use today's position directly, but ensure we don't show future
+            const scrollPosition = todayOffsetLeft + dayWidth - containerWidth;
+            const finalScroll = Math.max(0, Math.min(scrollPosition, container.scrollWidth - containerWidth));
+            container.scrollLeft = finalScroll;
+          }
+        } else {
+          // Fallback: scroll to show the last columns (but not all the way to empty space)
+          const dayWidth = 14; // Approximate width per day
+          const columnsToShow = 15; // Show last ~15 columns
+          container.scrollLeft = Math.max(0, container.scrollWidth - (columnsToShow * dayWidth));
+        }
+      }
+    });
+  }
+
+  // Scroll on initial load and when year changes
+  function initScroll() {
+    // Try multiple times to ensure graph is rendered
+    scrollToToday();
+    setTimeout(scrollToToday, 100);
+    setTimeout(scrollToToday, 300);
+    setTimeout(scrollToToday, 500);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initScroll();
+    
+    // Also scroll when year changes
+    buttons.forEach((b) => {
+      b.addEventListener('click', () => {
+        setTimeout(() => {
+          scrollToToday();
+          setTimeout(scrollToToday, 100);
+        }, 150);
+      });
+    });
+  });
+
+  // Also try when window loads (in case DOMContentLoaded fired too early)
+  window.addEventListener('load', () => {
+    setTimeout(scrollToToday, 200);
+  });
+</script>
+
+<style>
+  .shiny-sec {
+    background: linear-gradient(135deg, #a476ff 25%, #eee5ff 50%, #a476ff 75%);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shine 3s linear infinite;
+  }
+
+  @keyframes shine {
+    0% {
+      background-position: 100% 50%;
+    }
+    30%,
+    70% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Custom scrollbar for contributions graph only */
+  .contributions-graph-container {
+    scrollbar-width: thin;
+    scrollbar-color: var(--sec) transparent;
+    padding-bottom: 8px;
+  }
+
+  .contributions-graph-container::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .contributions-graph-container::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+  }
+
+  .contributions-graph-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, var(--sec), #7b5bbf);
+    border-radius: 10px;
+    transition: background 0.3s ease;
+  }
+
+  .contributions-graph-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, #b595ff, var(--sec));
+  }
+
+  /* Hide scrollbar on desktop when not needed */
+  @media (min-width: 768px) {
+    .contributions-graph-container {
+      overflow-x: visible;
+    }
+  }
+</style>

@@ -2,9 +2,9 @@
 import LikeButton from "../React/LikeButton.tsx";
 ---
 
-<footer class="w-full py-12 border-t border-[#ffffff10]">
+<footer class="w-full py-8 md:py-12 pb-24 md:pb-12 border-t border-[#ffffff10]">
   <div class="max-w-5xl mx-auto">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-10">
       <div class="flex flex-col lg:items-start items-center space-y-6 gap-9">
         <div class="flex space-x-6 sm:space-x-8">
           {
@@ -85,7 +85,7 @@ import LikeButton from "../React/LikeButton.tsx";
         </div>
       </div>
 
-      <div class="flex flex-col items-center lg:items-start space-y-6">
+      <div class="flex flex-col items-center lg:items-start space-y-4 md:space-y-6">
         <div class="w-full max-w-xs">
           <iframe
             title="Spotify"
@@ -94,20 +94,272 @@ import LikeButton from "../React/LikeButton.tsx";
             class="w-full h-80"
             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
             loading="lazy"></iframe>
-          
         </div>
       </div>
     </div>
 
-    <div class="mt-12 pt-8 border-t border-[#ffffff10]">
-      <p class="text-center text-sm text-[var(--white-icon)] space-y-2">
+    <!-- Digital Date/Time Display -->
+    <div class="mt-1 md:mt-4 flex justify-center">
+      <div id="datetime-display" class="digital-clock">
+        <div class="digital-date">
+          <span id="date-display"></span>
+        </div>
+        <div class="digital-time-container">
+          <div class="digital-time" id="time-display"></div>
+          <button id="time-format-toggle" class="time-toggle-btn" title="Toggle 12/24 hour format">
+            <span id="format-indicator">24H</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-2 md:mt-4 pt-4 md:pt-6 border-t border-[#ffffff10]">
+      <p class="text-center text-sm text-[var(--white-icon)]">
         <!-- If you are using this template, by MIT License you can't remove the copyright notice -->
         <span class="block sm:inline"
-          >Copyright © 2025 <a href="https://github.com/pardeep1916P"
+          >Copyright © 2025 <a href="https://github.com/pardeep1916P" class="hover:text-[var(--white)] transition-colors"
             >Charan Chaitanya Devanaboyina</a
           >. All rights reserved.</span
         >
       </p>
     </div>
+
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+      
+      .digital-clock {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 1.5rem;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
+        border: 2px solid rgba(164, 118, 255, 0.4);
+        border-radius: 12px;
+        box-shadow: 
+          0 0 30px rgba(164, 118, 255, 0.3),
+          inset 0 0 30px rgba(0, 0, 0, 0.8),
+          inset 0 2px 4px rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .digital-clock::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+          repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(164, 118, 255, 0.03) 2px,
+            rgba(164, 118, 255, 0.03) 4px
+          );
+        pointer-events: none;
+      }
+
+      .digital-date {
+        font-family: 'Orbitron', 'Courier New', monospace;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: rgba(164, 118, 255, 0.9);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        position: relative;
+        z-index: 1;
+      }
+
+      .digital-time-container {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .digital-time {
+        font-family: 'Orbitron', 'Courier New', monospace;
+        font-size: 1.5rem;
+        font-weight: 900;
+        color: var(--sec);
+        letter-spacing: 0.05em;
+        display: flex;
+        align-items: baseline;
+        gap: 0.05rem;
+        white-space: nowrap;
+        filter: drop-shadow(0 0 6px rgba(164, 118, 255, 0.6));
+      }
+
+      .digital-time .digit {
+        display: inline-block;
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+        position: relative;
+        color: var(--sec);
+        /* Create dotted/segmented appearance with purple using multiple text-shadows */
+        text-shadow: 
+          /* Horizontal dots pattern */
+          0.5px 0 0 var(--sec),
+          -0.5px 0 0 var(--sec),
+          1px 0 0 var(--sec),
+          -1px 0 0 var(--sec),
+          1.5px 0 0 var(--sec),
+          -1.5px 0 0 var(--sec),
+          2px 0 0 var(--sec),
+          -2px 0 0 var(--sec),
+          /* Vertical spacing dots */
+          0.5px 0.3px 0 var(--sec),
+          -0.5px 0.3px 0 var(--sec),
+          0.5px 0.6px 0 var(--sec),
+          -0.5px 0.6px 0 var(--sec),
+          /* Glow effect */
+          0 0 3px var(--sec),
+          0 0 6px rgba(164, 118, 255, 0.6),
+          0 0 10px rgba(164, 118, 255, 0.3);
+      }
+
+      .digital-time .separator {
+        color: var(--sec);
+        font-size: 1.3rem;
+        font-weight: 900;
+        animation: blink 1s infinite;
+        margin: 0 0.1rem;
+        text-shadow: 
+          0 0 3px var(--sec),
+          0 0 6px rgba(164, 118, 255, 0.6);
+        vertical-align: baseline;
+      }
+
+      .digital-time .seconds {
+        font-size: 1rem;
+        font-weight: 700;
+        opacity: 0.9;
+        margin-left: 0.05rem;
+      }
+
+      .digital-time .ampm {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--sec);
+        margin-left: 0.25rem;
+        opacity: 0.8;
+        text-shadow: 0 0 4px rgba(164, 118, 255, 0.5);
+      }
+
+      .time-toggle-btn {
+        background: rgba(164, 118, 255, 0.15);
+        border: 1px solid rgba(164, 118, 255, 0.3);
+        border-radius: 6px;
+        padding: 0.25rem 0.5rem;
+        color: var(--sec);
+        font-family: 'Orbitron', monospace;
+        font-size: 0.65rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .time-toggle-btn:hover {
+        background: rgba(164, 118, 255, 0.25);
+        border-color: var(--sec);
+        box-shadow: 0 0 8px rgba(164, 118, 255, 0.4);
+      }
+
+      @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0.2; }
+      }
+
+      @media (min-width: 768px) {
+        .digital-date {
+          font-size: 0.8rem;
+        }
+        .digital-time {
+          font-size: 1.75rem;
+        }
+        .digital-time .separator {
+          font-size: 1.5rem;
+        }
+        .digital-time .seconds {
+          font-size: 1.2rem;
+        }
+        .time-toggle-btn {
+          font-size: 0.7rem;
+          padding: 0.3rem 0.6rem;
+        }
+      }
+    </style>
+
+    <script>
+      let is24Hour = true;
+      
+      function updateDateTime() {
+        const now = new Date();
+        
+        // Format date: Day, Month DD
+        const dateOptions: Intl.DateTimeFormatOptions = { 
+          weekday: 'short', 
+          month: 'short', 
+          day: 'numeric' 
+        };
+        const dateStr = now.toLocaleDateString('en-US', dateOptions).toUpperCase();
+        
+        // Format time based on 12/24 hour format
+        let hours = now.getHours();
+        let ampm = '';
+        
+        if (!is24Hour) {
+          ampm = hours >= 12 ? ' PM' : ' AM';
+          hours = hours % 12;
+          hours = hours ? hours : 12; // 0 should be 12
+        }
+        
+        const hoursStr = String(hours).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        
+        const dateDisplay = document.getElementById('date-display');
+        const timeDisplay = document.getElementById('time-display');
+        const formatIndicator = document.getElementById('format-indicator');
+        
+        if (dateDisplay) dateDisplay.textContent = dateStr;
+        if (timeDisplay) {
+          // All in one line: HH:MM:SS
+          timeDisplay.innerHTML = `
+            <span class="digit">${hoursStr[0]}</span>
+            <span class="digit">${hoursStr[1]}</span>
+            <span class="separator">:</span>
+            <span class="digit">${minutes[0]}</span>
+            <span class="digit">${minutes[1]}</span>
+            <span class="separator">:</span>
+            <span class="digit seconds">${seconds[0]}</span>
+            <span class="digit seconds">${seconds[1]}</span>
+            ${ampm ? `<span class="ampm">${ampm}</span>` : ''}
+          `;
+        }
+        if (formatIndicator) {
+          formatIndicator.textContent = is24Hour ? '24H' : '12H';
+        }
+      }
+      
+      // Toggle button functionality
+      const toggleBtn = document.getElementById('time-format-toggle');
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+          is24Hour = !is24Hour;
+          updateDateTime();
+        });
+      }
+      
+      // Update immediately and then every second
+      updateDateTime();
+      setInterval(updateDateTime, 1000);
+    </script>
   </div>
 </footer>

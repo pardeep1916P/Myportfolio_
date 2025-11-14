@@ -1,0 +1,277 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Nav from "@/components/nav.astro";
+import Footer from "@/components/footer.astro";
+
+// All certifications including PDFs
+const allCertifications = [
+  {
+    name: "AWS Certified Solutions Architect Associate",
+    issuer: "Amazon Web Services",
+    date: "2025",
+    image: "/certificates/aws-architect-cert.png",
+    credentialId: "411d3d1015704663a0dcbb2e424b3713",
+    description: "Expertise in designing distributed systems, implementing security best practices, and optimizing AWS architectures.",
+    certificateUrl: "https://cp.certmetrics.com/amazon/en/public/verify/credential/411d3d1015704663a0dcbb2e424b3713",
+    credlyUrl: "https://www.credly.com/badges/1305c231-9fd6-4a87-8582-a54d73eaca11/public_url",
+    showButtons: true,
+    verified: true,
+    isPdf: false,
+  },
+  {
+    name: "Oracle Cloud Infrastructure Foundations Associate",
+    issuer: "Oracle",
+    date: "2025",
+    image: "/certificates/oracle-cert.png",
+    credentialId: "6A47D044A74E446B13FF56F17BA37B4A",
+    description: "Comprehensive understanding of Oracle Cloud Infrastructure fundamentals, networking, compute, storage, and security.",
+    certificateUrl: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=6A47D044A74E446B13FF56F17BA37B4A0AE1CEB0BE4A31120E8860071969F7AC",
+    credlyUrl: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=6A47D044A74E446B13FF56F17BA37B4A0AE1CEB0BE4A31120E8860071969F7AC",
+    showButtons: true,
+    verified: true,
+    isPdf: false,
+  },
+  {
+    name: "AWS Cloud Practitioner Essentials",
+    issuer: "AWS Skill Builder",
+    date: "2025",
+    pdf: "/certificates/clf-02_skillBuilder.pdf",
+    image: "/aws-skill-builder.svg",
+    credentialId: "CLF-02",
+    description: "Comprehensive understanding of AWS Cloud fundamentals, security, and best practices.",
+    showButtons: false,
+    isPdf: true,
+  },
+  {
+    name: "AWS Cloud Practitioner (KodeKloud)",
+    issuer: "KodeKloud",
+    date: "2025",
+    pdf: "/certificates/clf02_kodeKloud.pdf",
+    image: "/certificates/clf02_kodeKloud.pdf",
+    credentialId: "CLF-02-KK",
+    description: "AWS Cloud Practitioner certification preparation and fundamentals.",
+    showButtons: false,
+    isPdf: true,
+  },
+  {
+    name: "Terraform Associate",
+    issuer: "KodeKloud",
+    date: "2025",
+    pdf: "/certificates/terraform.pdf",
+    image: "/certificates/terraform.pdf",
+    credentialId: "Terraform-2025",
+    description: "Infrastructure as Code expertise using Terraform for cloud resource provisioning and management.",
+    showButtons: false,
+    isPdf: true,
+  },
+  {
+    name: "Git & GitHub",
+    issuer: "KodeKloud",
+    date: "2025",
+    pdf: "/certificates/git.pdf",
+    image: "/certificates/git.pdf",
+    credentialId: "Git-2025",
+    description: "Version control mastery with Git and GitHub for collaborative software development.",
+    showButtons: false,
+    isPdf: true,
+  },
+  {
+    name: "Kubernetes Fundamentals",
+    issuer: "KodeKloud",
+    date: "2025",
+    pdf: "/certificates/kuber.pdf",
+    image: "/certificates/kuber.pdf",
+    credentialId: "K8s-2025",
+    description: "Container orchestration expertise with Kubernetes for scalable application deployment.",
+    showButtons: false,
+    isPdf: true,
+  },
+  {
+    name: "SQL Fundamentals",
+    issuer: "LinkedIn Learning",
+    date: "2025",
+    pdf: "/certificates/sql.pdf",
+    image: "/certificates/sql.pdf",
+    credentialId: "SQL-2025",
+    description: "Database querying and management skills with SQL.",
+    showButtons: false,
+    isPdf: true,
+  },
+  {
+    name: "Python Essentials 1 & 2",
+    issuer: "Cisco Networking Academy",
+    date: "August 2025",
+    image: "/python-cert.svg",
+    credentialId: "PCAP-2025",
+    description: "Complete Python programming from fundamentals to intermediate level, including OOP, modules, exceptions, and advanced problem-solving patterns.",
+    certificateUrl: "https://www.netacad.com/portal/learning",
+    credlyUrl: "https://www.credly.com/badges/cefd2bbd-8282-49d1-bbc6-af49ff5a08e7",
+    showButtons: false,
+    isPdf: false,
+  },
+];
+---
+
+<Layout title="All Certifications - Charan Chaitanya">
+  <Nav />
+  <section class="min-h-screen text-[var(--white)] pt-24 pb-24 md:pb-12">
+    <div class="max-w-5xl mx-auto px-4 md:px-0">
+      <div class="mb-8">
+        <a
+          href="/#certifications"
+          class="inline-flex items-center text-[var(--white-icon)] hover:text-[var(--white)] transition-colors mb-4"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-2">
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+          </svg>
+          Back to Portfolio
+        </a>
+        <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec">Achievements</h2>
+        <h3 class="text-3xl md:text-4xl lg:text-5xl font-medium mb-6 md:mb-8">All Certifications</h3>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
+        {
+          allCertifications.map((cert) => (
+            <div class="group bg-[#1414149c] border border-[var(--white-icon-tr)] rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-[var(--sec)] transition-all duration-300">
+              <div class="flex flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-4">
+                <div class="flex-shrink-0 mx-auto sm:mx-0">
+                  {cert.isPdf ? (
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-white/5 p-2 flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 md:w-12 md:h-12 text-[var(--sec)]">
+                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                      </svg>
+                    </div>
+                  ) : (
+                    <img 
+                      src={cert.image} 
+                      alt={cert.name} 
+                      class="w-16 h-16 md:w-20 md:h-20 rounded-xl object-contain bg-white/5 p-2" 
+                      onerror="this.style.display='none'"
+                    />
+                  )}
+                </div>
+                
+                <div class="flex-1 min-w-0 text-center sm:text-left w-full">
+                  <h4 class="text-lg md:text-xl font-semibold text-[var(--white)] mb-2 group-hover:text-[var(--sec)] transition-colors duration-300 break-words">
+                    {cert.name}
+                  </h4>
+                  <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
+                    <p class="text-[var(--white-icon)] text-xs md:text-sm whitespace-nowrap">
+                      Issued by <span class="text-[var(--white)]">{cert.issuer}</span>
+                    </p>
+                    {cert.verified && (
+                      <span class="verified-badge text-[10px] font-semibold px-1.5 py-0.5 rounded border border-[#ffd700]/20 flex-shrink-0">
+                        Verified
+                      </span>
+                    )}
+                  </div>
+                  <p class="text-[var(--white-icon)] text-xs md:text-sm mb-2 break-words">
+                    {cert.date} {cert.credentialId && cert.issuer === 'Oracle' && `• ID: ${cert.credentialId}`}
+                  </p>
+                  <p class="text-[var(--white-icon)] text-xs md:text-sm leading-relaxed mb-4 break-words">
+                    {cert.description}
+                  </p>
+                  
+                  {cert.isPdf && cert.pdf ? (
+                    <a
+                      href={cert.pdf}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center justify-center px-3 py-2 text-xs md:text-sm font-medium text-[var(--white)] rounded-lg border border-[var(--white-icon-tr)] bg-[#1414149c] hover:bg-[var(--sec)] hover:border-[var(--sec)] transition-all duration-300 w-full sm:w-auto flex-shrink-0"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 mr-2 flex-shrink-0">
+                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                      </svg>
+                      <span class="truncate">View Certificate</span>
+                    </a>
+                  ) : cert.showButtons ? (
+                    <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 flex-wrap">
+                      <a
+                        href={cert.certificateUrl ?? "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center justify-center px-3 py-2 text-xs md:text-sm font-medium text-[var(--white)] rounded-lg border border-[var(--white-icon-tr)] bg-[#1414149c] hover:bg-[var(--sec)] hover:border-[var(--sec)] transition-all duration-300 whitespace-nowrap flex-shrink-0"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 mr-2 opacity-90 flex-shrink-0">
+                          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span class="truncate">Verify</span>
+                      </a>
+                      <a
+                        href={cert.credlyUrl ?? "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center justify-center px-3 py-2 text-xs md:text-sm font-medium text-[var(--white)] rounded-lg border border-[var(--white-icon-tr)] bg-[#1414149c] hover:bg-orange-500 hover:border-orange-500 transition-all duration-300 whitespace-nowrap flex-shrink-0"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 mr-2 opacity-90 flex-shrink-0">
+                          <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z"/>
+                        </svg>
+                        <span class="truncate">Credly</span>
+                      </a>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+      
+      <div class="mt-8 md:mt-12 text-center">
+        <a
+          href="https://www.credly.com/users/devanaboyina-charan-chaitanya"
+          target="_blank"
+          class="inline-flex items-center px-4 md:px-6 py-3 text-base md:text-lg font-medium text-[var(--white)] bg-gradient-to-r from-[var(--sec)] to-purple-600 rounded-xl hover:from-purple-600 hover:to-[var(--sec)] transition-all duration-300 transform hover:scale-105"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 md:w-5 md:h-5 mr-2">
+            <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z"/>
+          </svg>
+          View All Certifications on Credly
+        </a>
+      </div>
+    </div>
+  </section>
+  <Footer />
+</Layout>
+
+<style>
+  .shiny-sec {
+    background: linear-gradient(135deg, #a476ff 25%, #eee5ff 50%, #a476ff 75%);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shine 3s linear infinite;
+  }
+
+  .verified-badge {
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 25%, #ffd700 50%, #ffed4e 75%, #ffd700 100%);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gold-shine 3s ease-in-out infinite;
+    display: inline-block;
+  }
+
+  @keyframes shine {
+    0% {
+      background-position: 100% 50%;
+    }
+    30%,
+    70% {
+      background-position: 0% 50%;
+    }
+  }
+
+  @keyframes gold-shine {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+</style>
+

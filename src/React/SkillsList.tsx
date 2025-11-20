@@ -28,7 +28,7 @@ const CategoryIcons = {
       fill="currentColor"
       className="w-6 h-6 text-[var(--sec)] opacity-70"
     >
-      <path d="M12 2l7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4Zm0 4.3L7 7.9V12c0 3.37 2.24 6.47 5 7.62 2.76-1.15 5-4.25 5-7.62V7.9l-5-1.6ZM6 20h12v2H6v-2Z"/>
+      <path d="M12 2l7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4Zm0 4.3L7 7.9V12c0 3.37 2.24 6.47 5 7.62 2.76-1.15 5-4.25 5-7.62V7.9l-5-1.6ZM6 20h12v2H6v-2Z" />
     </svg>
   ),
 };
@@ -74,10 +74,10 @@ const SkillsList = () => {
               className="md:w-[400px] w-full bg-[#1414149c] rounded-2xl text-left hover:bg-opacity-80 transition-all border border-[var(--white-icon-tr)] cursor-pointer overflow-hidden"
             >
               <div className="flex items-center gap-3 p-4">
-                {CategoryIcons[category]}
+                {CategoryIcons[category as keyof typeof CategoryIcons]}
                 <div className="flex items-center gap-2 flex-grow justify-between">
                   <div className="min-w-0 max-w-[200px] md:max-w-none overflow-hidden">
-                    <span className="block truncate text-[var(--white)] text-lg">
+                    <span className="block truncate text-[var(--white)] text-lg select-none">
                       {category}
                     </span>
                   </div>
@@ -85,9 +85,8 @@ const SkillsList = () => {
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    className={`w-6 h-6 text-[var(--white)] transform transition-transform flex-shrink-0 ${
-                      openItem === category ? "rotate-180" : ""
-                    }`}
+                    className={`w-6 h-6 text-[var(--white)] transform transition-transform flex-shrink-0 ${openItem === category ? "rotate-180" : ""
+                      }`}
                   >
                     <path d="M11.9999 13.1714L16.9497 8.22168L18.3639 9.63589L11.9999 15.9999L5.63599 9.63589L7.0502 8.22168L11.9999 13.1714Z"></path>
                   </svg>
@@ -95,11 +94,10 @@ const SkillsList = () => {
               </div>
 
               <div
-                className={`transition-all duration-300 px-4 ${
-                  openItem === category
-                    ? "max-h-[500px] pb-4 opacity-100"
-                    : "max-h-0 opacity-0"
-                }`}
+                className={`transition-all duration-300 px-4 ${openItem === category
+                  ? "max-h-[500px] pb-4 opacity-100"
+                  : "max-h-0 opacity-0"
+                  }`}
               >
                 <ul className="space-y-2 text-[var(--white-icon)] text-sm">
                   {items.map((item, index) => (

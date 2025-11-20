@@ -1,0 +1,19 @@
+{
+    "github": {
+        "silent": true
+    },
+    "routes": [
+        {
+            "src": "/",
+            "headers": {
+                "cache-control": "s-maxage=7200, stale-while-revalidate"
+            }
+        }
+    ],
+    "cron": [
+        {
+            "path": "/api/revalidate",
+            "schedule": "0 */2 * * *"
+        }
+    ]
+}

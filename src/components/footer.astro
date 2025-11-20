@@ -99,16 +99,10 @@ import LikeButton from "../React/LikeButton.tsx";
     </div>
 
     <!-- Digital Date/Time Display -->
-    <div class="mt-1 md:mt-4 flex justify-center">
+    <div class="-mt-4 md:-mt-2 flex justify-center">
       <div id="datetime-display" class="digital-clock">
-        <div class="digital-date">
-          <span id="date-display"></span>
-        </div>
         <div class="digital-time-container">
           <div class="digital-time" id="time-display"></div>
-          <button id="time-format-toggle" class="time-toggle-btn" title="Toggle 12/24 hour format">
-            <span id="format-indicator">24H</span>
-          </button>
         </div>
       </div>
     </div>
@@ -124,242 +118,275 @@ import LikeButton from "../React/LikeButton.tsx";
       </p>
     </div>
 
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
-      
+    <style is:global>
       .digital-clock {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.5rem;
-        padding: 1rem 1.5rem;
-        background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
-        border: 2px solid rgba(164, 118, 255, 0.4);
-        border-radius: 12px;
-        box-shadow: 
-          0 0 30px rgba(164, 118, 255, 0.3),
-          inset 0 0 30px rgba(0, 0, 0, 0.8),
-          inset 0 2px 4px rgba(255, 255, 255, 0.1);
+        justify-content: center;
+        padding: 1rem 2rem;
+        background: #000000;
+        border: 1px solid rgba(164, 118, 255, 0.2);
+        border-radius: 8px;
         position: relative;
-        overflow: hidden;
-      }
-
-      .digital-clock::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: 
-          repeating-linear-gradient(
-            0deg,
-            transparent,
-            transparent 2px,
-            rgba(164, 118, 255, 0.03) 2px,
-            rgba(164, 118, 255, 0.03) 4px
-          );
-        pointer-events: none;
-      }
-
-      .digital-date {
-        font-family: 'Orbitron', 'Courier New', monospace;
-        font-size: 0.7rem;
-        font-weight: 700;
-        color: rgba(164, 118, 255, 0.9);
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        position: relative;
-        z-index: 1;
       }
 
       .digital-time-container {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        position: relative;
-        z-index: 1;
+        justify-content: center;
+        gap: 0.5rem;
       }
 
       .digital-time {
-        font-family: 'Orbitron', 'Courier New', monospace;
-        font-size: 1.5rem;
-        font-weight: 900;
-        color: var(--sec);
-        letter-spacing: 0.05em;
         display: flex;
-        align-items: baseline;
-        gap: 0.05rem;
-        white-space: nowrap;
-        filter: drop-shadow(0 0 6px rgba(164, 118, 255, 0.6));
+        align-items: center;
+        gap: 0.8rem;
       }
 
-      .digital-time .digit {
-        display: inline-block;
-        font-variant-numeric: tabular-nums;
-        line-height: 1;
+      /* Seven-segment digit container */
+      .clock-digit {
         position: relative;
-        color: var(--sec);
-        /* Create dotted/segmented appearance with purple using multiple text-shadows */
-        text-shadow: 
-          /* Horizontal dots pattern */
-          0.5px 0 0 var(--sec),
-          -0.5px 0 0 var(--sec),
-          1px 0 0 var(--sec),
-          -1px 0 0 var(--sec),
-          1.5px 0 0 var(--sec),
-          -1.5px 0 0 var(--sec),
-          2px 0 0 var(--sec),
-          -2px 0 0 var(--sec),
-          /* Vertical spacing dots */
-          0.5px 0.3px 0 var(--sec),
-          -0.5px 0.3px 0 var(--sec),
-          0.5px 0.6px 0 var(--sec),
-          -0.5px 0.6px 0 var(--sec),
-          /* Glow effect */
-          0 0 3px var(--sec),
-          0 0 6px rgba(164, 118, 255, 0.6),
-          0 0 10px rgba(164, 118, 255, 0.3);
+        width: 50px;
+        height: 80px;
+        display: inline-block;
       }
 
-      .digital-time .separator {
-        color: var(--sec);
-        font-size: 1.3rem;
-        font-weight: 900;
+      /* Individual segment styles */
+      .clock-segment {
+        position: absolute;
+        background: #a476ff;
+        transition: opacity 0.1s ease;
+      }
+      
+      .clock-segment.active {
+        opacity: 1;
+        box-shadow: 
+          0 0 10px #a476ff,
+          0 0 20px #a476ff,
+          0 0 30px rgba(164, 118, 255, 0.5);
+      }
+      
+      .clock-segment.inactive {
+        opacity: 0.05;
+        background: rgba(164, 118, 255, 0.2);
+        box-shadow: none;
+      }
+
+      /* Horizontal segments */
+      .seg-a, .seg-d, .seg-g {
+        height: 6px;
+        width: 35px;
+        left: 7.5px;
+        clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
+      }
+
+      .seg-a { top: 0; }
+      .seg-g { top: 37px; }
+      .seg-d { bottom: 0; }
+
+      /* Vertical segments */
+      .seg-b, .seg-c, .seg-e, .seg-f {
+        width: 6px;
+        height: 32px;
+        clip-path: polygon(50% 0%, 100% 10%, 100% 90%, 50% 100%, 0% 90%, 0% 10%);
+      }
+
+      .seg-b { top: 6px; right: 0; }
+      .seg-c { bottom: 6px; right: 0; }
+      .seg-e { bottom: 6px; left: 0; }
+      .seg-f { top: 6px; left: 0; }
+
+      /* Colon separator */
+      .clock-colon {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        height: 80px;
+        margin: 0 0.3rem;
+      }
+
+      .clock-dot {
+        width: 8px;
+        height: 8px;
+        background: #a476ff;
+        border-radius: 50%;
+        box-shadow: 
+          0 0 10px #a476ff,
+          0 0 20px #a476ff;
         animation: blink 1s infinite;
-        margin: 0 0.1rem;
-        text-shadow: 
-          0 0 3px var(--sec),
-          0 0 6px rgba(164, 118, 255, 0.6);
-        vertical-align: baseline;
       }
 
-      .digital-time .seconds {
-        font-size: 1rem;
-        font-weight: 700;
-        opacity: 0.9;
-        margin-left: 0.05rem;
-      }
-
-      .digital-time .ampm {
+      /* AM/PM indicator */
+      .clock-ampm {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-left: 1rem;
         font-size: 0.7rem;
         font-weight: 700;
-        color: var(--sec);
-        margin-left: 0.25rem;
-        opacity: 0.8;
-        text-shadow: 0 0 4px rgba(164, 118, 255, 0.5);
+        letter-spacing: 0.1em;
       }
 
-      .time-toggle-btn {
-        background: rgba(164, 118, 255, 0.15);
-        border: 1px solid rgba(164, 118, 255, 0.3);
-        border-radius: 6px;
-        padding: 0.25rem 0.5rem;
-        color: var(--sec);
-        font-family: 'Orbitron', monospace;
-        font-size: 0.65rem;
-        font-weight: 700;
-        cursor: pointer;
+      .ampm-text {
+        color: rgba(164, 118, 255, 0.3);
         transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
       }
 
-      .time-toggle-btn:hover {
-        background: rgba(164, 118, 255, 0.25);
-        border-color: var(--sec);
-        box-shadow: 0 0 8px rgba(164, 118, 255, 0.4);
+      .ampm-text.active {
+        color: #a476ff;
+        text-shadow: 
+          0 0 10px #a476ff,
+          0 0 20px rgba(164, 118, 255, 0.5);
       }
 
       @keyframes blink {
         0%, 50% { opacity: 1; }
-        51%, 100% { opacity: 0.2; }
+        51%, 100% { opacity: 0.3; }
       }
 
-      @media (min-width: 768px) {
-        .digital-date {
-          font-size: 0.8rem;
+      /* Responsive sizing */
+      @media (max-width: 768px) {
+        .digital-clock {
+          padding: 1rem 1.5rem;
         }
-        .digital-time {
-          font-size: 1.75rem;
+        
+        .clock-digit {
+          width: 35px;
+          height: 56px;
         }
-        .digital-time .separator {
-          font-size: 1.5rem;
+
+        .seg-a, .seg-d, .seg-g {
+          height: 4px;
+          width: 24px;
+          left: 5.5px;
         }
-        .digital-time .seconds {
-          font-size: 1.2rem;
+
+        .seg-g { top: 26px; }
+
+        .seg-b, .seg-c, .seg-e, .seg-f {
+          width: 4px;
+          height: 22px;
         }
-        .time-toggle-btn {
-          font-size: 0.7rem;
-          padding: 0.3rem 0.6rem;
+
+        .seg-b { top: 4px; }
+        .seg-c { bottom: 4px; }
+        .seg-e { bottom: 4px; }
+        .seg-f { top: 4px; }
+
+        .clock-colon {
+          height: 56px;
+          gap: 12px;
+        }
+
+        .clock-dot {
+          width: 6px;
+          height: 6px;
+        }
+
+        .clock-ampm {
+          font-size: 0.6rem;
+          margin-left: 0.5rem;
         }
       }
     </style>
 
-    <script>
-      let is24Hour = true;
-      
-      function updateDateTime() {
-        const now = new Date();
-        
-        // Format date: Day, Month DD
-        const dateOptions: Intl.DateTimeFormatOptions = { 
-          weekday: 'short', 
-          month: 'short', 
-          day: 'numeric' 
+    <script is:inline>
+      (function() {
+        // Seven-segment display mapping
+        const segmentMap = {
+          '0': ['a', 'b', 'c', 'd', 'e', 'f'],
+          '1': ['b', 'c'],
+          '2': ['a', 'b', 'd', 'e', 'g'],
+          '3': ['a', 'b', 'c', 'd', 'g'],
+          '4': ['b', 'c', 'f', 'g'],
+          '5': ['a', 'c', 'd', 'f', 'g'],
+          '6': ['a', 'c', 'd', 'e', 'f', 'g'],
+          '7': ['a', 'b', 'c'],
+          '8': ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+          '9': ['a', 'b', 'c', 'd', 'f', 'g']
         };
-        const dateStr = now.toLocaleDateString('en-US', dateOptions).toUpperCase();
-        
-        // Format time based on 12/24 hour format
-        let hours = now.getHours();
-        let ampm = '';
-        
-        if (!is24Hour) {
-          ampm = hours >= 12 ? ' PM' : ' AM';
+
+        function createSegmentDigit(digit) {
+          const segments = segmentMap[digit] || [];
+          const allSegments = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+          
+          let html = '<div class="clock-digit">';
+          allSegments.forEach(seg => {
+            const isActive = segments.includes(seg);
+            const className = isActive ? 'active' : 'inactive';
+            html += `<div class="clock-segment seg-${seg} ${className}"></div>`;
+          });
+          html += '</div>';
+          
+          return html;
+        }
+
+        function createColon() {
+          return '<div class="clock-colon"><div class="clock-dot"></div><div class="clock-dot"></div></div>';
+        }
+
+        function updateDateTime() {
+          const timeDisplay = document.getElementById('time-display');
+          if (!timeDisplay) return;
+
+          const now = new Date();
+          let hours = now.getHours();
+          const isPM = hours >= 12;
+          
+          // Convert to 12-hour format
           hours = hours % 12;
           hours = hours ? hours : 12; // 0 should be 12
-        }
-        
-        const hoursStr = String(hours).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        
-        const dateDisplay = document.getElementById('date-display');
-        const timeDisplay = document.getElementById('time-display');
-        const formatIndicator = document.getElementById('format-indicator');
-        
-        if (dateDisplay) dateDisplay.textContent = dateStr;
-        if (timeDisplay) {
-          // All in one line: HH:MM:SS
-          timeDisplay.innerHTML = `
-            <span class="digit">${hoursStr[0]}</span>
-            <span class="digit">${hoursStr[1]}</span>
-            <span class="separator">:</span>
-            <span class="digit">${minutes[0]}</span>
-            <span class="digit">${minutes[1]}</span>
-            <span class="separator">:</span>
-            <span class="digit seconds">${seconds[0]}</span>
-            <span class="digit seconds">${seconds[1]}</span>
-            ${ampm ? `<span class="ampm">${ampm}</span>` : ''}
+          
+          const hoursStr = String(hours).padStart(2, '0');
+          const minutes = String(now.getMinutes()).padStart(2, '0');
+          const seconds = String(now.getSeconds()).padStart(2, '0');
+          
+          let html = '';
+          
+          // Hours
+          html += createSegmentDigit(hoursStr[0]);
+          html += createSegmentDigit(hoursStr[1]);
+          
+          // Colon
+          html += createColon();
+          
+          // Minutes
+          html += createSegmentDigit(minutes[0]);
+          html += createSegmentDigit(minutes[1]);
+          
+          // Colon
+          html += createColon();
+          
+          // Seconds
+          html += createSegmentDigit(seconds[0]);
+          html += createSegmentDigit(seconds[1]);
+          
+          // AM/PM indicator
+          html += `
+            <div class="clock-ampm">
+              <div class="ampm-text ${!isPM ? 'active' : ''}">AM</div>
+              <div class="ampm-text ${isPM ? 'active' : ''}">PM</div>
+            </div>
           `;
+          
+          timeDisplay.innerHTML = html;
         }
-        if (formatIndicator) {
-          formatIndicator.textContent = is24Hour ? '24H' : '12H';
-        }
-      }
-      
-      // Toggle button functionality
-      const toggleBtn = document.getElementById('time-format-toggle');
-      if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-          is24Hour = !is24Hour;
+        
+        // Initialize
+        function initClock() {
           updateDateTime();
-        });
-      }
-      
-      // Update immediately and then every second
-      updateDateTime();
-      setInterval(updateDateTime, 1000);
+          setInterval(updateDateTime, 1000);
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initClock);
+        } else {
+          initClock();
+        }
+      })();
     </script>
   </div>
 </footer>

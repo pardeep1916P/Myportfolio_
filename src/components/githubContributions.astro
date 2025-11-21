@@ -140,6 +140,20 @@ function colorForCount(count: number): string {
   if (count <= 9) return portfolioPalette[3];
   return portfolioPalette[4];
 }
+
+function filterWeeksUpToToday(weeks: CalendarWeek[]): CalendarWeek[] {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  return weeks.filter((week) => {
+    // Check if this week contains any dates up to today
+    return week.contributionDays.some((day) => {
+      const dayDate = new Date(day.date);
+      dayDate.setHours(0, 0, 0, 0);
+      return dayDate <= today;
+    });
+  });
+}
 ---
 
 <section id="contributions" class="py-12 pb-24 md:pb-12 border-t border-[#ffffff10] text-[var(--white)]">
@@ -162,13 +176,13 @@ function colorForCount(count: number): string {
                 <div data-year-graph={y} class={y === currentYear ? "block" : "hidden"}>
                   {cal ? (
                     <div class="space-y-3">
-                      <div class="contributions-graph-container overflow-x-auto" data-graph-container>
-                        <div class="grid grid-flow-col grid-rows-7 gap-1 min-w-max md:min-w-0">
+                      <div class="contributions-graph-container overflow-x-auto md:overflow-x-visible" data-graph-container>
+                        <div class="grid grid-flow-col grid-rows-7 gap-1" style="width: fit-content;" data-contributions-grid>
                           {
-                            cal.weeks.map((week) =>
+                            filterWeeksUpToToday(cal.weeks).map((week) =>
                               week.contributionDays.map((day) => (
                                 <div
-                                  class="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 rounded-sm"
+                                  class="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 rounded-sm"
                                   style={`background-color: ${colorForCount(day.contributionCount)};`}
                                   title={`${day.date} • ${day.contributionCount} contributions`}
                                 ></div>
@@ -270,6 +284,22 @@ function colorForCount(count: number): string {
   }
 
   buttons.forEach((b) => b.addEventListener('click', () => activate(b.getAttribute('data-year-btn')!)));
+
+  // Auto-hide scrollbar on mobile
+  const graphContainers = document.querySelectorAll('[data-graph-container]');
+  graphContainers.forEach((container) => {
+    let scrollTimeout: number;
+    
+    container.addEventListener('scroll', () => {
+      container.classList.add('scrolling');
+      
+      clearTimeout(scrollTimeout);
+      scrollTimeout = window.setTimeout(() => {
+        container.classList.remove('scrolling');
+      }, 1000);
+    });
+  });
+
 
   // Auto-scroll graph to show today's column on load
   function scrollToToday() {
@@ -466,6 +496,26 @@ function colorForCount(count: number): string {
 
   .contributions-graph-container::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(90deg, #b595ff, var(--sec));
+  }
+
+  /* Auto-hide scrollbar on mobile */
+  @media (max-width: 767px) {
+    .contributions-graph-container {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    
+    .contributions-graph-container::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .contributions-graph-container.scrolling {
+      scrollbar-width: thin;
+    }
+    
+    .contributions-graph-container.scrolling::-webkit-scrollbar {
+      display: block;
+    }
   }
 
   /* Hide scrollbar on desktop when not needed */

@@ -37,7 +37,7 @@ const navItems: NavItem[] = [
 <div class="flex justify-center w-full">
   <nav
     id="main-nav"
-    class="fixed left-1/2 -translate-x-1/2 z-[100] bg-[var(--background)] border border-1 border-transparent backdrop-blur-xl transition-all duration-500 ease-in-out top-4 md:top-4 bottom-0 md:bottom-auto w-[90%]"
+    class="fixed left-1/2 -translate-x-1/2 z-[100] bg-[var(--background)] border border-1 border-transparent backdrop-blur-xl transition-all duration-500 ease-in-out top-4 md:top-4 bottom-0 md:bottom-auto w-full md:w-[90%]"
   >
     <div class="container mx-auto flex justify-center items-center p-3">
       <ul
@@ -66,12 +66,17 @@ const navItems: NavItem[] = [
 </div>
 <style>
   nav {
-    transform: translateX(-50%);
-    background-color: var(--background);
     transition:
       background-color 0.3s ease,
       border-radius 0.3s ease,
       border-color 0.3s ease;
+  }
+
+  @media (min-width: 768px) {
+    nav {
+      transform: translateX(-50%);
+      background-color: var(--background);
+    }
   }
 
   nav.scrolling {
@@ -107,11 +112,11 @@ const navItems: NavItem[] = [
   @media (max-width: 767px) {
     nav {
       width: 100% !important;
-      transform: translateX(-50%);
-      top: auto;
-      bottom: 0;
-      left: 50%;
-      position: fixed;
+      transform: none;
+      top: auto !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      position: fixed !important;
       border-radius: 0;
       border-top-left-radius: 1rem;
       border-top-right-radius: 1rem;
@@ -148,10 +153,6 @@ const navItems: NavItem[] = [
 
       if (window.innerWidth >= 768) {
         nav?.style.setProperty("width", `${currentWidth}px`);
-      } else {
-        nav?.style.setProperty("width", `100%`);
-        nav?.style.setProperty("top", `auto`);
-        nav?.style.setProperty("bottom", `0`);
       }
     } else {
       nav?.classList.remove("scrolling");
@@ -159,10 +160,6 @@ const navItems: NavItem[] = [
         nav?.style.setProperty("width", "80%");
         nav?.style.setProperty("top", "1rem");
         nav?.style.setProperty("bottom", "auto");
-      } else {
-        nav?.style.setProperty("width", "100%");
-        nav?.style.setProperty("top", "auto");
-        nav?.style.setProperty("bottom", "0");
       }
     }
     rafId = null;
@@ -185,9 +182,21 @@ const navItems: NavItem[] = [
       const targetId = target.getAttribute("href")?.substring(1) || "";
       const targetElement = document.getElementById(targetId);
       if (targetElement) {
-        targetElement.scrollIntoView({
-          behavior: "smooth",
-        });
+        const isMobile = window.innerWidth < 768;
+        if (isMobile) {
+          // On mobile, scroll with no offset so headings appear flush at top
+          const elementPosition = targetElement.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth"
+          });
+        } else {
+          // On desktop, use standard scrollIntoView
+          targetElement.scrollIntoView({
+            behavior: "smooth",
+          });
+        }
       }
     });
   });

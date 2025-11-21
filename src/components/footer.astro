@@ -5,7 +5,7 @@ import LikeButton from "../React/LikeButton.tsx";
 <footer class="w-full py-8 md:py-12 pb-24 md:pb-12 border-t border-[#ffffff10]">
   <div class="max-w-5xl mx-auto">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-10">
-      <div class="flex flex-col lg:items-start items-center space-y-6 gap-9">
+      <div class="flex flex-col lg:items-start items-center space-y-6">
         <div class="flex space-x-6 sm:space-x-8">
           {
             [
@@ -38,7 +38,9 @@ import LikeButton from "../React/LikeButton.tsx";
             ))
           }
         </div>
-        <LikeButton client:load />
+        <div class="mt-4">
+          <LikeButton client:load />
+        </div>
       </div>
 
       <div class="flex flex-col items-center md:items-start space-y-6">
@@ -64,7 +66,7 @@ import LikeButton from "../React/LikeButton.tsx";
                 alt: "Vercel Logo",
               },
             ].map((tech) => (
-              <div class="flex items-center space-x-3">
+              <div class="flex items-center justify-center md:justify-start space-x-3">
                 <span class="text-[var(--white-icon)] text-sm">
                   {tech.desc}
                 </span>
@@ -99,7 +101,7 @@ import LikeButton from "../React/LikeButton.tsx";
     </div>
 
     <!-- Digital Date/Time Display -->
-    <div class="-mt-4 md:-mt-2 flex justify-center">
+    <div class="-mt-16 md:-mt-2 flex justify-center">
       <div id="datetime-display" class="digital-clock">
         <div class="digital-time-container">
           <div class="digital-time" id="time-display"></div>
@@ -250,45 +252,102 @@ import LikeButton from "../React/LikeButton.tsx";
       /* Responsive sizing */
       @media (max-width: 768px) {
         .digital-clock {
-          padding: 1rem 1.5rem;
+          padding: 0.75rem 1rem;
+        }
+        
+        .digital-time {
+          gap: 0.5rem;
         }
         
         .clock-digit {
-          width: 35px;
-          height: 56px;
+          width: 28px;
+          height: 45px;
         }
 
         .seg-a, .seg-d, .seg-g {
-          height: 4px;
-          width: 24px;
-          left: 5.5px;
+          height: 3.5px;
+          width: 19px;
+          left: 4.5px;
         }
 
-        .seg-g { top: 26px; }
+        .seg-g { top: 20.75px; }
 
         .seg-b, .seg-c, .seg-e, .seg-f {
-          width: 4px;
-          height: 22px;
+          width: 3.5px;
+          height: 17.5px;
         }
 
-        .seg-b { top: 4px; }
-        .seg-c { bottom: 4px; }
-        .seg-e { bottom: 4px; }
-        .seg-f { top: 4px; }
+        .seg-b { top: 3.5px; }
+        .seg-c { bottom: 3.5px; }
+        .seg-e { bottom: 3.5px; }
+        .seg-f { top: 3.5px; }
 
         .clock-colon {
-          height: 56px;
-          gap: 12px;
+          height: 45px;
+          gap: 10px;
+          margin: 0 0.15rem;
         }
 
         .clock-dot {
-          width: 6px;
-          height: 6px;
+          width: 5px;
+          height: 5px;
         }
 
         .clock-ampm {
-          font-size: 0.6rem;
-          margin-left: 0.5rem;
+          font-size: 0.55rem;
+          margin-left: 0.4rem;
+          gap: 3px;
+        }
+      }
+
+      /* Extra small screens */
+      @media (max-width: 480px) {
+        .digital-clock {
+          padding: 0.6rem 0.8rem;
+        }
+        
+        .digital-time {
+          gap: 0.35rem;
+        }
+        
+        .clock-digit {
+          width: 22px;
+          height: 36px;
+        }
+
+        .seg-a, .seg-d, .seg-g {
+          height: 3px;
+          width: 15px;
+          left: 3.5px;
+        }
+
+        .seg-g { top: 16.5px; }
+
+        .seg-b, .seg-c, .seg-e, .seg-f {
+          width: 3px;
+          height: 14px;
+        }
+
+        .seg-b { top: 3px; }
+        .seg-c { bottom: 3px; }
+        .seg-e { bottom: 3px; }
+        .seg-f { top: 3px; }
+
+        .clock-colon {
+          height: 36px;
+          gap: 8px;
+          margin: 0 0.1rem;
+        }
+
+        .clock-dot {
+          width: 4px;
+          height: 4px;
+        }
+
+        .clock-ampm {
+          font-size: 0.5rem;
+          margin-left: 0.3rem;
+          gap: 2px;
         }
       }
     </style>

@@ -59,6 +59,9 @@ const projects: Project[] = [
                 <Image
                   src={project.image}
                   alt={project.title}
+                  loading="lazy"
+                  fetchpriority="low"
+                  decoding="async"
                   class="w-full h-48 md:h-72 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>

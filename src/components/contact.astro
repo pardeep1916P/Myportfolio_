@@ -27,6 +27,9 @@
             name="from_name"
             placeholder="Name"
             required
+            autocomplete="name"
+            inputmode="text"
+            enterkeyhint="next"
             class="px-4 py-2 bg-[#1414149c] text-[var(--white)] border border-[var(--white-icon-tr)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--sec)]"
           />
           <input
@@ -34,16 +37,27 @@
             name="email"
             placeholder="Email"
             required
+            autocomplete="email"
+            inputmode="email"
+            enterkeyhint="next"
             class="px-4 py-2 bg-[#1414149c] text-[var(--white)] border border-[var(--white-icon-tr)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--sec)]"
           />
           <input type="hidden" name="_subject" value="New message from portfolio" />
-          <textarea
-            name="message"
-            placeholder="Message"
-            rows="6"
-            required
-            class="px-4 py-2 bg-[#1414149c] text-[var(--white)] border border-[var(--white-icon-tr)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--sec)] resize-none"
-          ></textarea>
+          <div class="relative">
+            <textarea
+              name="message"
+              id="message-input"
+              placeholder="Message"
+              rows="6"
+              required
+              maxlength="1000"
+              enterkeyhint="send"
+              class="px-4 py-2 pb-8 w-full bg-[#1414149c] text-[var(--white)] border border-[var(--white-icon-tr)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--sec)] resize-none"
+            ></textarea>
+            <div class="absolute bottom-2 right-3 text-xs text-[var(--white-icon)] pointer-events-none select-none">
+              <span id="char-count">1000</span>
+            </div>
+          </div>
           <button
             type="submit"
             id="submit-btn"
@@ -68,6 +82,25 @@
   const formMessage = document.getElementById("form-message");
   const submitBtn = document.getElementById("submit-btn");
   const inputs = form.querySelectorAll("input, textarea");
+  const messageInput = document.getElementById("message-input");
+  const charCount = document.getElementById("char-count");
+
+  // Character counter - shows remaining characters
+  if (messageInput && charCount) {
+    messageInput.addEventListener("input", () => {
+      const remaining = 1000 - messageInput.value.length;
+      charCount.textContent = remaining;
+      
+      // Color feedback based on remaining characters
+      if (remaining < 100) {
+        charCount.style.color = "#ff6b6b"; // Red when running low
+      } else if (remaining < 200) {
+        charCount.style.color = "#ffa500"; // Orange as warning
+      } else {
+        charCount.style.color = "var(--white-icon)"; // Default subtle color
+      }
+    });
+  }
 
   // Function to check if all required fields are filled
   function checkFormValidity() {
@@ -93,6 +126,7 @@
     input.addEventListener("input", checkFormValidity);
     input.addEventListener("blur", checkFormValidity);
   });
+
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();

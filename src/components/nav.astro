@@ -37,21 +37,25 @@ const navItems: NavItem[] = [
 <div class="flex justify-center w-full">
   <nav
     id="main-nav"
+    aria-label="Main navigation"
+    role="navigation"
     class="fixed left-1/2 -translate-x-1/2 z-[100] bg-[var(--background)] border border-1 border-transparent backdrop-blur-xl transition-all duration-500 ease-in-out top-4 md:top-4 bottom-0 md:bottom-auto w-full md:w-[90%]"
   >
     <div class="container mx-auto flex justify-center items-center p-3">
       <ul
         class="flex w-full justify-between md:space-x-6 md:justify-center md:gap-12 gap-2 sm:gap-4 relative"
+        role="list"
       >
         {
           navItems.map((item) => (
-            <li class={`flex-1 md:flex-none relative ${item.label === 'Contributions' ? 'hidden md:block' : ''}`}>
+            <li class={`flex-1 md:flex-none relative ${item.label === 'Contributions' ? 'hidden md:block' : ''}`} role="listitem">
               <a
                 href={item.href}
+                aria-label={`Navigate to ${item.label} section`}
                 class="flex flex-col items-center gap-1 text-[var(--white-icon)] transition-colors text-xs md:text-base relative group"
               >
-                <div class="absolute -left-3 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full transition-all duration-300 scale-0 opacity-0 bg-[#A9FF5B] nav-indicator hidden md:block" />
-                <span class="md:hidden flex items-center justify-center w-6 h-6">
+                <div class="absolute -left-3 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full transition-all duration-300 scale-0 opacity-0 bg-[#A9FF5B] nav-indicator hidden md:block" aria-hidden="true" />
+                <span class="md:hidden flex items-center justify-center w-6 h-6" aria-hidden="true">
                   <fragment set:html={item.icon} />
                 </span>
                 <span class="hidden md:inline-block">{item.label}</span>
